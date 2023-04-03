@@ -16,4 +16,7 @@ dependencies {
      */
     implementation project(':FtcRobotController')
     implementation 'org.jetbrains:annotations:15.0'
+    implementation('com.acmerobotics.dashboard:dashboard:0.4.9') {
+        exclude group: 'org.firstinspires.ftc'
+    }
 }
