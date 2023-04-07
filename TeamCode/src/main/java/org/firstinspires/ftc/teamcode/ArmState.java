@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.ArmKinematics.roundDecimal;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -55,6 +57,6 @@ public class ArmState {
     @Override
     @NotNull
     public String toString() {
-        return "ArmState [ (" + x + ", " + y + ", " + z + "), side=" + side + ", endEffectorAngle=" + endEffectorAngle + " ]";
+        return "ArmState [ (" + roundDecimal(x, 2) + ", " + roundDecimal(y, 2) + ", " + roundDecimal(z, 2) + "), side=" + side + ", endEffectorAngle=" + endEffectorAngle + " ]";
     }
 }
