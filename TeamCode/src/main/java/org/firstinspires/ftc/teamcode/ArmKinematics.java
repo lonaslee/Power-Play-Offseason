@@ -93,11 +93,15 @@ public class ArmKinematics {
     }
 
     public static @NotNull String formatArrayPoint(double[] arrayPoint) {
-        return "(" + roundDecimal(arrayPoint[0], 3) + ", " + roundDecimal(arrayPoint[1], 3) + ")";
+        return "(" + roundDecimal(arrayPoint[0]) + ", " + roundDecimal(arrayPoint[1]) + ")";
     }
 
     public static double roundDecimal(double decimal, int places) {
         int powres = (int) pow(10, places);
         return round(decimal * powres) / (double) powres;
+    }
+
+    public static double roundDecimal(double decimal) {
+        return roundDecimal(decimal, 2);
     }
 }
