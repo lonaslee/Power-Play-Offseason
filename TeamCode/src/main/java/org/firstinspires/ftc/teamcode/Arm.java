@@ -16,10 +16,10 @@ public class Arm {
     private final ServoImplEx servo3;
     private final ServoImplEx servo4;
 
-    public static double OFFSET_1 = 135;
-    public static double OFFSET_2 = 260;
-    public static double OFFSET_3 = -75;
-    public static double OFFSET_4 = 250;
+    public static double OFFSET_1 = 55;
+    public static double OFFSET_2 = -270;
+    public static double OFFSET_3 = 75;
+    public static double OFFSET_4 = 165;
 
     private final ElapsedTime timer = new ElapsedTime();
 

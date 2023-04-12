@@ -11,13 +11,15 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp
 @Config
 public class KTest extends LinearOpMode {
-    public static double L1 = 10;
-    public static double L2 = 10;
-    public static double L3 = 10;
+    public static double L1 = 10.5;
+    public static double L2 = 8;
+    public static double L3 = 11;
 
     public static double X = 0;
-    public static double Y = 0;
+    public static double Y = 18.5;
     public static int S = 0;
+
+    private double turretPos = 0.0;
 
     @Override
     public void runOpMode() {
@@ -30,22 +32,23 @@ public class KTest extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            X += gamepad1.left_stick_x * 0.1;
-            Y += -gamepad1.left_stick_y * 0.1;
+            kinematics.setLengths(L1, L2, L3);
+            X += gamepad1.left_stick_x * 0.01;
+            Y += -gamepad1.left_stick_y * 0.01;
 
-            if (gamepad1.right_stick_x != 0)
-                servo1.setPosition(servo1.getPosition() + gamepad1.right_stick_x * 0.05);
+            turretPos += gamepad1.right_stick_x * 0.001;
+            servo1.setPosition(turretPos);
 
             var v = kinematics.inverseKinematics(X, Y);
             if (v == null) {
                 telemetry.addData("kinematics", "UNREACHABLE");
             } else {
-                servo2.setPosition(toPosition(v[S][1]) + toPosition(Arm.OFFSET_2));
-                servo3.setPosition(toPosition(v[S][2]) + toPosition(Arm.OFFSET_3));
-                servo4.setPosition(toPosition(v[S][3]) + toPosition(Arm.OFFSET_4));
+                servo2.setPosition(-(toPosition(v[S][0]) + toPosition(Arm.OFFSET_2)));
+                servo3.setPosition(toPosition(v[S][1]) + toPosition(Arm.OFFSET_3));
+                servo4.setPosition(toPosition(v[S][2]) + toPosition(Arm.OFFSET_4));
                 telemetry.addData(
                         "kinematics",
-                        roundDecimal(v[S][1]) + ", " + roundDecimal(v[S][2]) + ", " + roundDecimal(v[S][3])
+                        roundDecimal(v[S][0]) + ", " + roundDecimal(v[S][1]) + ", " + roundDecimal(v[S][2])
                 );
             }
             telemetry.addData("coord", formatArrayPoint(new double[]{X, Y}));

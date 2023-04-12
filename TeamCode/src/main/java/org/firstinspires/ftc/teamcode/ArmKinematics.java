@@ -10,14 +10,24 @@ import org.jetbrains.annotations.Nullable;
  * additional degree of freedom for the end effector.
  */
 public class ArmKinematics {
-    public final double l1;
-    public final double l2;
-    public final double l3;
+    private double l1;
+    private double l2;
+    private double l3;
 
     public ArmKinematics(double l1, double l2, double l3) {
         this.l1 = l1;
         this.l2 = l2;
         this.l3 = l3;
+    }
+
+    public void setLengths(double l1, double l2, double l3) {
+        this.l1 = l1;
+        this.l2 = l2;
+        this.l3 = l3;
+    }
+
+    public double @NotNull [] getLengths() {
+        return new double[]{l1, l2, l3};
     }
 
     /**
