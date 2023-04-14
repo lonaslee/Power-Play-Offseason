@@ -34,7 +34,9 @@ public class Arm {
         servo3 = (ServoImplEx) hardwareMap.get("servo3");
         servo4 = (ServoImplEx) hardwareMap.get("servo4");
 
-        setState(ArmState.fromAngles(0, 90, 0, 0));
+        var ns = new ArmState(0, 18.5, 0);
+        System.out.println("ns = " + ns);
+        setState(ns);
     }
 
     @NotNull
@@ -49,8 +51,15 @@ public class Arm {
      * will return false, otherwise it will return true.
      */
     public boolean setState(@NotNull ArmState newstate) {
-        if (state.equals(newstate)) return true;
-        if (!state.reachable) return false;
+        System.out.println("newstate = " + newstate);
+        if (state.equals(newstate)) {
+            System.out.println("same");
+            return true;
+        }
+        if (!state.reachable) {
+            System.out.println(state + " unreachable");
+            return false;
+        }
 
         servo1.setPosition(toPosition(newstate.angle1) + toPosition(OFFSET_1));
         servo2.setPosition(-(toPosition(newstate.angle2) + toPosition(OFFSET_2)));
@@ -69,7 +78,6 @@ public class Arm {
     public void update() {
         var repr =
                 state + "\nturretAngle:" + state.angle1 + "\nangle1: " + state.angle2 + "\nangle2: " + state.angle3 + "\nangle3:" + state.angle4;
-        System.out.println("Arm.update()");
         System.out.println(repr);
         System.out.println();
     }
@@ -80,5 +88,13 @@ public class Arm {
 
     private static double toDegree(double position) {
         return position * 270.0;
+    }
+
+    private static double clipRange(double num, double min, double max) {
+        return Double.min(Double.max(num, min), max);
+    }
+
+    private static double clipRange(double num) {
+        return clipRange(num, 0, 1);
     }
 }

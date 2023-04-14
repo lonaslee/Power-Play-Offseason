@@ -31,7 +31,9 @@ public class Test extends LinearOpMode {
             if (!newstate.equals(arm.getState())) System.out.println("DELTA TO " + newstate);
             if (!arm.setState(newstate)) System.out.println("OUT OF RANGE");
 
-//            arm.update();
+
+            telemetry.addData("coord", arm.getState().toString());
+            telemetry.update();
 
             try {
                 prevGp1.copy(gamepad1);

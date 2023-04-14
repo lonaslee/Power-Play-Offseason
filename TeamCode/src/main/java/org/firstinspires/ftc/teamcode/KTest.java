@@ -42,8 +42,8 @@ public class KTest extends LinearOpMode {
             var v = kinematics.inverseKinematics(X, Y);
             if (v == null) {
                 telemetry.addData("kinematics", "UNREACHABLE");
-                X -= gamepad1.left_stick_x * 0.01;
-                Y -= -gamepad1.left_stick_y * 0.01;
+                X -= gamepad1.left_stick_x * 0.02;
+                Y -= -gamepad1.left_stick_y * 0.02;
             } else {
                 servo2.setPosition(-(toPosition(v[S][0]) + toPosition(Arm.OFFSET_2)));
                 servo3.setPosition(toPosition(v[S][1]) + toPosition(Arm.OFFSET_3));
