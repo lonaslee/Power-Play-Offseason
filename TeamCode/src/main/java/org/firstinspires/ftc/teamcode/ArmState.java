@@ -4,8 +4,8 @@ import static org.firstinspires.ftc.teamcode.ArmKinematics.roundDecimal;
 
 import androidx.annotation.NonNull;
 
-import com.acmerobotics.dashboard.config.Config;
 
+import org.jetbrains.annotations.Contract;
 
 import java.util.Objects;
 
@@ -15,7 +15,6 @@ import java.util.Objects;
  * configuration (0 or 1). The claw angle is the angle of the end effector
  * relative to the ground.
  */
-@Config
 public class ArmState {
     public final double x;
     public final double y;
@@ -30,10 +29,7 @@ public class ArmState {
 
     public final boolean reachable;
 
-    public static double L1 = 10;
-    public static double L2 = 10;
-    public static double L3 = 10;
-    private static final ArmKinematics kinematics = new ArmKinematics(L1, L2, L3);
+    private static final ArmKinematics kinematics = new ArmKinematics(10.5, 8, 11);
 
     public ArmState(double x, double y, double z, int side, double endEffectorAngle) {
         this.x = x;
@@ -47,7 +43,7 @@ public class ArmState {
 
         reachable = v != null;
         if (!reachable) {
-            angle1 = angle2 = angle3 = angle4 = 0;
+            angle1 = angle2 = angle3 = angle4 = Double.NaN;
         } else {
             angle1 = h[1];
             angle2 = v[side][0];
@@ -61,13 +57,13 @@ public class ArmState {
     }
 
     public ArmState(double x, double y, double z) {
-        this(x, y, z, 0, 0);
+        this(x, y, z, 0.0);
     }
 
     @NonNull
     public static ArmState fromAngles(double angle1, double angle2, double angle3, double angle4) {
         var v = kinematics.forwardKinematics(angle2, angle3, angle4);
-        var h = kinematics.forwardCoordinates(v[2][0], angle1);
+        var h = kinematics.forwardCoordinates(v[1][0], angle1);
         return new ArmState(h[0], v[2][1], h[1]);
     }
 
@@ -91,13 +87,14 @@ public class ArmState {
     }
 
     @NonNull
+    @Contract(" -> new")
     @Override
     protected final ArmState clone() {
         return new ArmState(x, y, z, side, endEffectorAngle);
     }
 
-    @Override
     @NonNull
+    @Override
     public String toString() {
         return "ArmState{ " + "(" + roundDecimal(x) + ", " + roundDecimal(y) + ", " + roundDecimal(z) + ") " + ", side=" + side + ", endEffectorAngle=" + endEffectorAngle + ", angle1=" + roundDecimal(
                 angle1) + ", angle2=" + roundDecimal(angle2) + ", angle3=" + roundDecimal(angle3) + ", angle4=" + roundDecimal(

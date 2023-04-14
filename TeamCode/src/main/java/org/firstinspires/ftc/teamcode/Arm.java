@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import static java.lang.Double.NaN;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
@@ -23,16 +25,17 @@ public class Arm {
 
     private final ElapsedTime timer = new ElapsedTime();
 
+    @NonNull
+    private ArmState state = new ArmState(NaN, NaN, NaN);
+
     public Arm(@NotNull HardwareMap hardwareMap) {
         servo1 = (ServoImplEx) hardwareMap.get("servo1");
         servo2 = (ServoImplEx) hardwareMap.get("servo2");
         servo3 = (ServoImplEx) hardwareMap.get("servo3");
         servo4 = (ServoImplEx) hardwareMap.get("servo4");
 
-        setState(ArmState.fromAngles(0, 0, 0, 0));
+        setState(ArmState.fromAngles(0, 90, 0, 0));
     }
-
-    private ArmState state = new ArmState(NaN, NaN, NaN);
 
     @NotNull
     public ArmState getState() {
@@ -47,9 +50,10 @@ public class Arm {
      */
     public boolean setState(@NotNull ArmState newstate) {
         if (state.equals(newstate)) return true;
+        if (!state.reachable) return false;
 
         servo1.setPosition(toPosition(newstate.angle1) + toPosition(OFFSET_1));
-        servo2.setPosition(toPosition(newstate.angle2) + toPosition(OFFSET_2));
+        servo2.setPosition(-(toPosition(newstate.angle2) + toPosition(OFFSET_2)));
         servo3.setPosition(toPosition(newstate.angle3) + toPosition(OFFSET_3));
         servo4.setPosition(toPosition(newstate.angle4) + toPosition(OFFSET_4));
 
@@ -64,7 +68,7 @@ public class Arm {
 
     public void update() {
         var repr =
-                state.toString() + "\nturretAngle:" + state.angle1 + "\nangle1: " + state.angle2 + "\nangle2: " + state.angle3 + "\nangle3:" + state.angle4;
+                state + "\nturretAngle:" + state.angle1 + "\nangle1: " + state.angle2 + "\nangle2: " + state.angle3 + "\nangle3:" + state.angle4;
         System.out.println("Arm.update()");
         System.out.println(repr);
         System.out.println();

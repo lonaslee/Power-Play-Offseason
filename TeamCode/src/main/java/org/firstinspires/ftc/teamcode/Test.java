@@ -28,11 +28,8 @@ public class Test extends LinearOpMode {
                     gamepad1.left_stick_y * 0.05,
                     gamepad1.right_stick_x * 0.01
             );
-            if (!newstate.equals(arm.getState()))
-                System.out.println("DELTA TO " + newstate);
-            if (!arm.setState(newstate)) {
-                System.out.println("OUT OF RANGE");
-            }
+            if (!newstate.equals(arm.getState())) System.out.println("DELTA TO " + newstate);
+            if (!arm.setState(newstate)) System.out.println("OUT OF RANGE");
 
 //            arm.update();
 

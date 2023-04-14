@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import static java.lang.Math.*;
 
+import androidx.annotation.NonNull;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,7 +33,7 @@ public class ArmKinematics {
     }
 
     /**
-     * Calculate vertical coordinates of the last joint (not the end effector).
+     * Calculate vertical coordinates of the arm's joints, returning them in an array of array-points.
      */
     public double @NotNull [][] forwardKinematics(double degree1, double degree2, double degree3) {
         double rad1 = toRadians(degree1);
@@ -102,7 +104,8 @@ public class ArmKinematics {
         return degree - 360.0 * floor((degree + 180.0) * (1.0 / 360.0));
     }
 
-    public static @NotNull String formatArrayPoint(double[] arrayPoint) {
+    @NotNull
+    public static String formatArrayPoint(@NonNull double[] arrayPoint) {
         return "(" + roundDecimal(arrayPoint[0]) + ", " + roundDecimal(arrayPoint[1]) + ")";
     }
 
