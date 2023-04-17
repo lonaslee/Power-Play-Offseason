@@ -23,14 +23,13 @@ public class Test extends LinearOpMode {
 
         while (opModeIsActive()) {
             ArmState newstate = arm.getState().delta(
-                    gamepad1.left_stick_x * 0.05,
-                    -gamepad1.right_stick_y * 0.05,
-                    gamepad1.left_stick_y * 0.05,
-                    gamepad1.right_stick_x * 0.01
+                    -gamepad1.left_stick_x * 0.1,
+                    -gamepad1.right_stick_y * 0.1,
+                    -gamepad1.left_stick_y * 0.1,
+                    gamepad1.right_stick_x * 0.1
             );
-            if (!newstate.equals(arm.getState())) System.out.println("DELTA TO " + newstate);
             if (!arm.setState(newstate)) System.out.println("OUT OF RANGE");
-
+            else System.out.println("DELTA TO");
 
             telemetry.addData("coord", arm.getState().toString());
             telemetry.update();

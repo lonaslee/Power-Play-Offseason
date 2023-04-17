@@ -53,11 +53,9 @@ public class Arm {
     public boolean setState(@NotNull ArmState newstate) {
         System.out.println("newstate = " + newstate);
         if (state.equals(newstate)) {
-            System.out.println("same");
             return true;
         }
-        if (!state.reachable) {
-            System.out.println(state + " unreachable");
+        if (!newstate.reachable) {
             return false;
         }
 
