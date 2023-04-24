@@ -25,8 +25,7 @@ public class Arm {
 
     private final ElapsedTime timer = new ElapsedTime();
 
-    @NonNull
-    private ArmState state = new ArmState(NaN, NaN, NaN);
+    @NonNull private ArmState state = new ArmState(NaN, NaN, NaN);
 
     public Arm(@NotNull HardwareMap hardwareMap) {
         servo1 = (ServoImplEx) hardwareMap.get("servo1");
@@ -51,15 +50,8 @@ public class Arm {
      * will return false, otherwise it will return true.
      */
     public boolean setState(@NotNull ArmState newstate) {
-        System.out.println("newstate = " + newstate);
-        if (state.equals(newstate)) {
-            System.out.println("same");
-            return true;
-        }
-        if (!state.reachable) {
-            System.out.println(state + " unreachable");
-            return false;
-        }
+        if (getState().equals(newstate)) return true;
+        if (!newstate.reachable) return false;
 
         servo1.setPosition(toPosition(newstate.angle1) + toPosition(OFFSET_1));
         servo2.setPosition(-(toPosition(newstate.angle2) + toPosition(OFFSET_2)));

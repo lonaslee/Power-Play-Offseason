@@ -5,9 +5,6 @@ import static org.firstinspires.ftc.teamcode.ArmKinematics.roundDecimal;
 import androidx.annotation.NonNull;
 
 
-import org.jetbrains.annotations.Contract;
-
-import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -85,13 +82,6 @@ public class ArmState {
 
     public boolean equals(@NonNull ArmState other) {
         return other.hashCode() == hashCode();
-    }
-
-    @NonNull
-    @Contract(" -> new")
-    @Override
-    protected final ArmState clone() {
-        return new ArmState(x, y, z, side, endEffectorAngle);
     }
 
     @NonNull
