@@ -73,8 +73,8 @@ public class ArmKinematics {
         result[1][0] = angleWrap(toDegrees(b + a));
         result[1][1] = angleWrap(toDegrees(m - toRadians(180)));
 
-        result[0][2] = -angleWrap(180 - (360 - result[0][0] - (180 + result[0][1])));
-        result[1][2] = -angleWrap(180 - (360 - result[1][0] - (180 + result[1][1])));
+        result[0][2] = angleWrap((540 - 180) - result[0][0] - (180 - result[0][1]));
+        result[1][2] = angleWrap((540 - 180) - result[1][0] - (180 - result[0][1]));
 
         return result;
     }
