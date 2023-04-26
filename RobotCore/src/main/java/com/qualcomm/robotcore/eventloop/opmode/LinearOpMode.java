@@ -1,5 +1,6 @@
 package com.qualcomm.robotcore.eventloop.opmode;
 
+import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.I2cWarningManager;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.robotcore.util.ThreadPool;
@@ -48,7 +49,7 @@ public abstract class LinearOpMode extends OpMode {
    * where the op mode needs to be terminated early.
    * @throws InterruptedException
    */
-  abstract public void runOpMode() throws InterruptedException;
+  abstract public void runOpMode() throws InterruptedException, RobotCoreException;
 
   /**
    * Pauses the Linear Op Mode until start has been pressed or until the current thread

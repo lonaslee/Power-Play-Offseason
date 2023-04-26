@@ -68,25 +68,20 @@ public class FormattedLineBuilder {
         return this;
     }
 
-    public FormattedLineBuilder nl() {
-        return add("\n");
-    }
-
     public FormattedLineBuilder repeat(String str, int times) {
         for (int i = 0; i < times; i++) line.append(str);
         return this;
+    }
+
+    public FormattedLineBuilder nl() {
+        return add("\n");
     }
 
     @NonNull
     @Override
     public String toString() {
         if (spanning) end();
-        return line.toString()
-                .replaceAll("<", "&lt;")
-                .replaceAll(">", "&gt;")
-                .replaceAll(" ", "&nbsp;")
-                .replaceAll("\"", "&quot;")
-                .replaceAll("'", "&apos;");
+        return line.toString();
     }
 
     public static Telemetry initTelemetry(Telemetry telemetry) {

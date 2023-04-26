@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp
-public class GyroAngleControlTest extends LinearOpMode {
+public class GyroAnglePlaneControlTest extends LinearOpMode {
     private Arm arm;
     private BNO055IMU imu;
 
@@ -28,13 +28,9 @@ public class GyroAngleControlTest extends LinearOpMode {
             int pitch = (int) angles.secondAngle;
             int roll = (int) angles.thirdAngle;
 
-            var z = roll / 4.5;
+            var z = 10;
             var x = Math.tan(yaw) * z;
             var y = Math.tan(pitch) * z;
-
-            z /= 4;
-            x /= 4;
-            y /= 4;
 
             var ns = new ArmState(x, y, z);
             telemetry.addData("ns", ns.toString());

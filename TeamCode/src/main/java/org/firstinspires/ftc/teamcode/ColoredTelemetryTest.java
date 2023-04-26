@@ -11,8 +11,8 @@ public class ColoredTelemetryTest extends LinearOpMode {
     @Override
     public void runOpMode() {
         PhotonCore.enable();
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         FormattedLineBuilder.initTelemetry(telemetry);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         waitForStart();
 
@@ -22,10 +22,11 @@ public class ColoredTelemetryTest extends LinearOpMode {
                     .nl()
                     .orange()
                     .add("orange string")
+                    .nl()
                     .addData("data", 543, "yellow", "orange")
                     .toString();
             System.out.println(s);
-            telemetry.addData("TAG", s);
+            telemetry.addLine(s);
             telemetry.update();
         }
     }
