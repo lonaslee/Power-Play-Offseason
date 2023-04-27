@@ -8,6 +8,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.arm.Arm;
+import org.firstinspires.ftc.teamcode.arm.ArmState;
+
 @TeleOp
 @Config
 public class Test extends LinearOpMode {

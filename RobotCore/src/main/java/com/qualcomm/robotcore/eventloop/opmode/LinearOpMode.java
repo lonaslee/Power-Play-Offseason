@@ -1,6 +1,5 @@
 package com.qualcomm.robotcore.eventloop.opmode;
 
-import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.I2cWarningManager;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.robotcore.util.ThreadPool;
@@ -49,7 +48,7 @@ public abstract class LinearOpMode extends OpMode {
    * where the op mode needs to be terminated early.
    * @throws InterruptedException
    */
-  abstract public void runOpMode() throws InterruptedException, RobotCoreException;
+  abstract public void runOpMode() throws InterruptedException;
 
   /**
    * Pauses the Linear Op Mode until start has been pressed or until the current thread
@@ -82,7 +81,7 @@ public abstract class LinearOpMode extends OpMode {
     // Otherwise, yield back our thread scheduling quantum and give other threads at
     // our priority level a chance to run
     Thread.yield();
-    }
+  }
 
   /**
    * Sleeps for the given amount of milliseconds, or until the thread is interrupted. This is
@@ -146,7 +145,7 @@ public abstract class LinearOpMode extends OpMode {
     if(isStarted) userMonitoredForStart = true;
 
     return this.isStarted || Thread.currentThread().isInterrupted();
-    }
+  }
 
   /**
    * Has the the stopping of the opMode been requested?
@@ -157,7 +156,7 @@ public abstract class LinearOpMode extends OpMode {
    */
   public final boolean isStopRequested() {
     return this.stopRequested || Thread.currentThread().isInterrupted();
-    }
+  }
 
   /**
    * From the non-linear OpMode; do not override

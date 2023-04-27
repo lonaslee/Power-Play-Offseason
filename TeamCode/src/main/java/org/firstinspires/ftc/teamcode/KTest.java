@@ -1,12 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.ArmKinematics.formatArrayPoint;
-import static org.firstinspires.ftc.teamcode.ArmKinematics.roundDecimal;
+import static org.firstinspires.ftc.teamcode.arm.ArmKinematics.formatArrayPoint;
+import static org.firstinspires.ftc.teamcode.arm.ArmKinematics.roundDecimal;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.teamcode.arm.Arm;
+import org.firstinspires.ftc.teamcode.arm.ArmKinematics;
 
 @TeleOp
 @Config

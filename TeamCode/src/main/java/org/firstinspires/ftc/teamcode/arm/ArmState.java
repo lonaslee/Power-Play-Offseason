@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.arm;
 
-import static org.firstinspires.ftc.teamcode.ArmKinematics.roundDecimal;
+import static org.firstinspires.ftc.teamcode.arm.ArmKinematics.roundDecimal;
 
 import androidx.annotation.NonNull;
 

@@ -7,6 +7,9 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.arm.Arm;
+import org.firstinspires.ftc.teamcode.arm.ArmState;
+
 @TeleOp
 public class GyroAnglePlaneControlTest extends LinearOpMode {
     private Arm arm;
