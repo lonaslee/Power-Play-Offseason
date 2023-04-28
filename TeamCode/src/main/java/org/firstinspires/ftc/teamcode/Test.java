@@ -16,6 +16,10 @@ import org.firstinspires.ftc.teamcode.arm.ArmState;
 public class Test extends LinearOpMode {
     private final Gamepad prevGp1 = new Gamepad();
 
+    public static int X = 0;
+    public static int Y = 18;
+    public static int Z = 0;
+
     private Arm arm;
 
     @Override
@@ -25,15 +29,7 @@ public class Test extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            ArmState newstate = arm.getState().delta(
-                    gamepad1.left_stick_x * 0.05,
-                    -gamepad1.right_stick_y * 0.05,
-                    gamepad1.left_stick_y * 0.05,
-                    gamepad1.right_stick_x * 0.05
-            );
-
-            if (!newstate.equals(arm.getState())) System.out.println("DELTA TO " + newstate);
-            if (!arm.setState(newstate)) System.out.println("OUT OF RANGE");
+            arm.setState(new ArmState(X, Y, Z));
 
             telemetry.addLine(arm.getState().toString());
             telemetry.update();

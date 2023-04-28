@@ -25,7 +25,8 @@ public class Arm {
 
     private final ElapsedTime timer = new ElapsedTime();
 
-    @NonNull private ArmState state = new ArmState(NaN, NaN, NaN);
+    @NonNull
+    private ArmState state = new ArmState(NaN, NaN, NaN);
 
     public Arm(@NotNull HardwareMap hardwareMap) {
         servo1 = (ServoImplEx) hardwareMap.get("servo1");
@@ -33,9 +34,7 @@ public class Arm {
         servo3 = (ServoImplEx) hardwareMap.get("servo3");
         servo4 = (ServoImplEx) hardwareMap.get("servo4");
 
-        var ns = new ArmState(0, 18.5, 0);
-        System.out.println("ns = " + ns);
-        setState(ns);
+        setState(new ArmState(0, 18, 0));
     }
 
     @NotNull
@@ -68,8 +67,7 @@ public class Arm {
     }
 
     public void update() {
-        var repr =
-                state + "\nturretAngle:" + state.angle1 + "\nangle1: " + state.angle2 + "\nangle2: " + state.angle3 + "\nangle3:" + state.angle4;
+        var repr = state + "\nturretAngle:" + state.angle1 + "\nangle1: " + state.angle2 + "\nangle2: " + state.angle3 + "\nangle3:" + state.angle4;
         System.out.println(repr);
         System.out.println();
     }

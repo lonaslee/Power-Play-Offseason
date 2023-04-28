@@ -29,7 +29,7 @@ public class FormattedLineBuilder {
      * Add an object's string representation to the line being built, applying html
      * escapes.
      */
-    public FormattedLineBuilder add(Object obj) {
+    public FormattedLineBuilder add(@NonNull Object obj) {
         line.append(obj.toString()
                 .replaceAll("&", "&amp;")
                 .replaceAll("<", "&lt;")
@@ -47,7 +47,7 @@ public class FormattedLineBuilder {
      *            displays.
      * @return this
      */
-    public FormattedLineBuilder clr(String clr) {
+    public FormattedLineBuilder clr(@NonNull String clr) {
         String newclr;
         try {
             final var hex = clr.replaceAll("0x", "").replaceAll("#", "");
@@ -182,7 +182,7 @@ public class FormattedLineBuilder {
     /**
      * Add without escaping html characters.
      */
-    public FormattedLineBuilder rawAdd(Object obj) {
+    public FormattedLineBuilder rawAdd(@NonNull Object obj) {
         line.append(obj.toString());
         return this;
     }

@@ -14,12 +14,12 @@ import org.firstinspires.ftc.teamcode.arm.ArmKinematics;
 @TeleOp
 @Config
 public class KTest extends LinearOpMode {
-    public static double L1 = 10.5;
+    public static double L1 = 10;
     public static double L2 = 8;
     public static double L3 = 11;
 
     public static double X = 0;
-    public static double Y = 18.5;
+    public static double Y = 18;
     public static int S = 0;
 
     private double turretPos = 0.0;

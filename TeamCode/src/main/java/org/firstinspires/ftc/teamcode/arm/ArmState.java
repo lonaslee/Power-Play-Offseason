@@ -27,7 +27,7 @@ public class ArmState {
 
     public final boolean reachable;
 
-    private static final ArmKinematics kinematics = new ArmKinematics(10.5, 8, 11);
+    private static final ArmKinematics kinematics = new ArmKinematics(10, 8, 11);
 
     public ArmState(double x, double y, double z, int side, double endEffectorAngle) {
         this.x = x;
@@ -52,6 +52,10 @@ public class ArmState {
 
     public ArmState(double x, double y, double z, double endEffectorAngle) {
         this(x, y, z, 0, endEffectorAngle);
+    }
+
+    public ArmState(double x, double y, double z, int side) {
+        this(x, y, z, side, 0.0);
     }
 
     public ArmState(double x, double y, double z) {
