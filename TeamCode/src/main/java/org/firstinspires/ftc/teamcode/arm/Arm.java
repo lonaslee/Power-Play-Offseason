@@ -5,6 +5,7 @@ import static java.lang.Double.NaN;
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -21,7 +22,7 @@ public class Arm {
     public static double OFFSET_1 = 55;
     public static double OFFSET_2 = -270;
     public static double OFFSET_3 = 75;
-    public static double OFFSET_4 = 165;
+    public static double OFFSET_4 = 223;
 
     private final ElapsedTime timer = new ElapsedTime();
 
@@ -55,7 +56,7 @@ public class Arm {
         servo1.setPosition(toPosition(newstate.angle1) + toPosition(OFFSET_1));
         servo2.setPosition(-(toPosition(newstate.angle2) + toPosition(OFFSET_2)));
         servo3.setPosition(toPosition(newstate.angle3) + toPosition(OFFSET_3));
-        servo4.setPosition(toPosition(newstate.angle4) + toPosition(OFFSET_4));
+        servo4.setPosition((toPosition(-newstate.angle4) + toPosition(OFFSET_4)));
 
         state = newstate;
         timer.reset();

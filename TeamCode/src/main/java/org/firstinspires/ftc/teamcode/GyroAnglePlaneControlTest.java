@@ -9,6 +9,8 @@ import com.outoftheboxrobotics.photoncore.PhotonCore;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.arm.Arm;
 import org.firstinspires.ftc.teamcode.arm.ArmState;
@@ -22,7 +24,7 @@ import java.util.Queue;
 @Config
 public class GyroAnglePlaneControlTest extends LinearOpMode {
     public static int X = 12;
-    public static int S = 0;
+    public static int S = 1;
 
     private Arm arm;
     private BNO055IMU imu;
@@ -70,6 +72,10 @@ public class GyroAnglePlaneControlTest extends LinearOpMode {
                     .nl()
                     .nl()
                     .add(arm.getState().toString())
+                    .nl()
+                    .startData("angle4", arm.getState().angle4)
+                    .red()
+                    .magenta()
                     .toString());
             telemetry.update();
         }
