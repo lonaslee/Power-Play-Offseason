@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.jetbrains.annotations.Contract;
@@ -19,8 +20,8 @@ public class FormattedLineBuilder {
     private String curClr = "";
     private boolean spanning = false;
 
-    private String[] colors = null;
-    private Consumer<String[]> adder = null;
+    @Nullable private String[] colors = null;
+    @Nullable private Consumer<String[]> adder = null;
 
     public FormattedLineBuilder() {
     }
@@ -30,6 +31,9 @@ public class FormattedLineBuilder {
      * escapes.
      */
     public FormattedLineBuilder add(@NonNull Object obj) {
+        if (adder != null)
+            throw new FormattedLineBuilderException("Adding elements while building entry type.");
+
         line.append(obj.toString()
                 .replaceAll("&", "&amp;")
                 .replaceAll("<", "&lt;")
@@ -37,6 +41,17 @@ public class FormattedLineBuilder {
                 .replaceAll(" ", "&nbsp;")
                 .replaceAll("\"", "&quot;")
                 .replaceAll("'", "&apos;"));
+        return this;
+    }
+
+    /**
+     * Add without escaping html characters.
+     */
+    public FormattedLineBuilder rawAdd(@NonNull Object obj) {
+        if (adder != null)
+            throw new FormattedLineBuilderException("Adding raw elements while building entry type.");
+
+        line.append(obj);
         return this;
     }
 
@@ -69,6 +84,8 @@ public class FormattedLineBuilder {
             if (i == colors.length - 1) {
                 final var ref = colors;
                 colors = null;
+                if (adder == null)
+                    throw new FormattedLineBuilderException("Adder is null for some reason.");
                 adder.accept(ref);
             }
         } else {
@@ -103,6 +120,9 @@ public class FormattedLineBuilder {
      *   .{@link FormattedLineBuilder#clr}("00FF00")</pre>
      */
     public FormattedLineBuilder startData(String label, Object data) {
+        if (adder != null)
+            throw new FormattedLineBuilderException("Starting data entry during another entry type.");
+
         colors = new String[2];
         final var prevClr = curClr;
         adder = (clrs) -> {
@@ -131,6 +151,9 @@ public class FormattedLineBuilder {
      *   .{@link FormattedLineBuilder#red}()</pre>
      */
     public FormattedLineBuilder startSlider(double min, double max, double cur) {
+        if (adder != null) throw new FormattedLineBuilderException(
+                "Starting slider entry during another entry type.");
+
         colors = new String[3];
         final var prevClr = curClr;
 
@@ -164,6 +187,42 @@ public class FormattedLineBuilder {
     }
 
     /**
+     * Similar to {@link FormattedLineBuilder#startSlider(double, double, double)}, except
+     * it is a progress bar. Follow calls to this method with two color methods, which will be
+     * used for completed and uncompleted parts of the bar, respectively.
+     */
+    public FormattedLineBuilder startProgressBar(double min, double max, double cur) {
+        if (adder != null) throw new FormattedLineBuilderException(
+                "Starting progress bar entry during another entry type.");
+
+        colors = new String[2];
+        final var prevClr = curClr;
+
+        final var df = new DecimalFormat(".#");
+        df.setRoundingMode(RoundingMode.HALF_UP);
+
+        final double percent = (cur / (max + 1e-6 - min));
+        final var idx = Integer.parseInt(String.valueOf(df.format(percent * 2).charAt(1)));
+
+        adder = (clrs) -> {
+            for (int i = 0; i < clrs.length; i++)
+                if (clrs[i] == null) clrs[i] = "white";
+            clr(clrs[1]);
+            add("[");
+            clr(clrs[0]);
+            repeat("█", idx + 1);
+            clr(clrs[1]);
+            repeat("━", 20 - idx - 1);
+            add("] ");
+            clr(clrs[0]);
+            add((int) (percent * 100));
+            add("% ");
+            clr(prevClr);
+        };
+        return this;
+    }
+
+    /**
      * Repeat the given string a number of times.
      */
     public FormattedLineBuilder repeat(String str, int times) {
@@ -177,14 +236,6 @@ public class FormattedLineBuilder {
      */
     public FormattedLineBuilder nl() {
         return add("\n");
-    }
-
-    /**
-     * Add without escaping html characters.
-     */
-    public FormattedLineBuilder rawAdd(@NonNull Object obj) {
-        line.append(obj.toString());
-        return this;
     }
 
     /* --------------- colors --------------- */
@@ -269,5 +320,11 @@ public class FormattedLineBuilder {
         telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
         telemetry.update();
         return telemetry;
+    }
+
+    public static class FormattedLineBuilderException extends RuntimeException {
+        public FormattedLineBuilderException(String msg) {
+            super(msg);
+        }
     }
 }
