@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import androidx.annotation.NonNull;
 
+import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -22,6 +23,8 @@ public class ProfiledServo {
             @NonNull Servo servo, double initPos, double defaultVel, double defaultAccel
     ) {
         this.servo = (ServoImplEx) servo;
+        this.servo.setPwmRange(new PwmControl.PwmRange(500, 2500));
+
         this.defaultVel = defaultVel;
         this.defaultAccel = defaultAccel;
 
