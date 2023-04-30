@@ -9,6 +9,8 @@ import com.outoftheboxrobotics.photoncore.PhotonCore;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.exception.RobotCoreException;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.arm.Arm;
 import org.firstinspires.ftc.teamcode.arm.ArmState;
@@ -21,6 +23,8 @@ import java.util.Queue;
 @TeleOp
 @Config
 public class GyroAnglePlaneControlTest extends LinearOpMode {
+    private final Gamepad prevGp1 = new Gamepad();
+
     public static int X = 12;
     public static int S = 1;
 
@@ -34,7 +38,10 @@ public class GyroAnglePlaneControlTest extends LinearOpMode {
     @Override
     public void runOpMode() {
         PhotonCore.enable();
-        telemetry = new MultipleTelemetry(FormattedLineBuilder.initTelemetry(telemetry), FtcDashboard.getInstance().getTelemetry());
+        telemetry = new MultipleTelemetry(
+                FormattedLineBuilder.initTelemetry(telemetry),
+                FtcDashboard.getInstance().getTelemetry()
+        );
 
         arm = new Arm(hardwareMap);
         imu = initIMU(hardwareMap.get(BNO055IMU.class, "imu"));
@@ -42,6 +49,8 @@ public class GyroAnglePlaneControlTest extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
+            if (gamepad1.x && !prevGp1.x) X = (X == 12 ? 15 : 12);
+
             final var angles = imu.getAngularOrientation();
 
             yaws.poll();
@@ -76,6 +85,12 @@ public class GyroAnglePlaneControlTest extends LinearOpMode {
                     .magenta()
                     .toString());
             telemetry.update();
+
+            try {
+                prevGp1.copy(gamepad1);
+            } catch (RobotCoreException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

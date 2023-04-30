@@ -8,6 +8,8 @@ import org.jetbrains.annotations.Contract;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.function.Consumer;
 
 /**
@@ -220,6 +222,62 @@ public class FormattedLineBuilder {
             clr(prevClr);
         };
         return this;
+    }
+
+    /**
+     * Add a spinner, automatically determining its current phase based on
+     * {@link System#currentTimeMillis()}.
+     */
+    public FormattedLineBuilder spinner(
+            @NonNull String[] phases, int phaseLengthMillis, int offset
+    ) {
+        final var idx =
+                (int) (((System.currentTimeMillis()) / phaseLengthMillis + offset) % phases.length);
+        add(phases[idx]);
+        return this;
+    }
+
+    public FormattedLineBuilder spinner(int phaseLengthMillis, int offset) {
+        return spinner(
+                new String[]{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"},
+                phaseLengthMillis,
+                offset
+        );
+    }
+
+    /**
+     * Default spinner with phase length of 100ms and offset of 0.
+     */
+    public FormattedLineBuilder spinner() {
+        return spinner(100, 0);
+    }
+
+    public FormattedLineBuilder spinnerBig(int phaseLengthMillis, int offset) {
+        return spinner(
+                new String[]{"⡀⠀", "⠄⠀", "⢂⠀", "⡂⠀", "⠅⠀", "⢃⠀", "⡃⠀", "⠍⠀", "⢋⠀", "⡋⠀", "⠍⠁", "⢋⠁", "⡋⠁", "⠍⠉", "⠋⠉", "⠋⠉", "⠉⠙", "⠉⠙", "⠉⠩", "⠈⢙", "⠈⡙", "⢈⠩", "⡀⢙", "⠄⡙", "⢂⠩", "⡂⢘", "⠅⡘", "⢃⠨", "⡃⢐", "⠍⡐", "⢋⠠", "⡋⢀", "⠍⡁", "⢋⠁", "⡋⠁", "⠍⠉", "⠋⠉", "⠋⠉", "⠉⠙", "⠉⠙", "⠉⠩", "⠈⢙", "⠈⡙", "⠈⠩", "⠀⢙", "⠀⡙", "⠀⠩", "⠀⢘", "⠀⡘", "⠀⠨", "⠀⢐", "⠀⡐", "⠀⠠", "⠀⢀", "⠀⡀"},
+                phaseLengthMillis,
+                offset
+        );
+    }
+
+    public FormattedLineBuilder spinnerBig() {
+        return spinnerBig(100, 0);
+    }
+
+    public FormattedLineBuilder spinnerLine(int phaseLengthMillis, int offset) {
+        return spinner(new String[]{"-", "\\", "|", "/"}, phaseLengthMillis, offset);
+    }
+
+    public FormattedLineBuilder spinnerLine() {
+        return spinnerLine(100, 0);
+    }
+
+    public FormattedLineBuilder spinnerNoise(int phaseLengthMillis, int offset) {
+        return spinner(new String[]{"▓", "▒", "░"}, phaseLengthMillis, offset);
+    }
+
+    public FormattedLineBuilder spinnerNoise() {
+        return spinnerNoise(100, 0);
     }
 
     /**
