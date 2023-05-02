@@ -7,13 +7,16 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 
 public class ProfiledServo {
     public final ServoImplEx servo;
 
     private final ElapsedTime timer = new ElapsedTime();
-    @NonNull private TrapezodialProfile profile;
+    @NonNull
+    private TrapezoidalProfile profile;
 
     private double target;
     private double defaultVel;
@@ -29,8 +32,11 @@ public class ProfiledServo {
         this.defaultAccel = defaultAccel;
 
         target = initPos;
-        servo.setPosition(initPos);
-        profile = new TrapezodialProfile(initPos, initPos, 0, 0);
+        profile = new TrapezoidalProfile(0, initPos, defaultVel, defaultAccel);
+    }
+
+    public ProfiledServo(@NotNull Servo servo, double initPos) {
+        this(servo, initPos, 0.5, 1.5);
     }
 
     public double getTarget() {
@@ -40,7 +46,8 @@ public class ProfiledServo {
     public void setTarget(double pos, double mV, double mA) {
         if (pos == target) return;
         target = pos;
-        profile = new TrapezodialProfile(getCurrentPosition(), target, mV, mA);
+        profile = new TrapezoidalProfile(getCurrentPosition(), target, mV, mA);
+        System.out.println("PROFILE " + Arrays.deepToString(profile.phases));
         timer.reset();
     }
 

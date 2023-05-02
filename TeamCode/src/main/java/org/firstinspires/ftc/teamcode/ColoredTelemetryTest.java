@@ -19,7 +19,7 @@ public class ColoredTelemetryTest extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            var s = new FormattedLineBuilder().red()
+            telemetry.addLine(new FormattedLineBuilder().red()
                     .add("red string")
                     .nl()
                     .orange()
@@ -33,12 +33,12 @@ public class ColoredTelemetryTest extends LinearOpMode {
                     .cyan()
                     .blue()
                     .nl()
-                    .startSlider(0, 100, 33)
+                    .startSlider(0, 100, 100)
                     .green()
                     .lime()
                     .white()
                     .nl()
-                    .startProgressBar(0, 100, 85)
+                    .startProgressBar(0, 100, 88)
                     .blue()
                     .cyan()
                     .white()
@@ -52,9 +52,7 @@ public class ColoredTelemetryTest extends LinearOpMode {
                     .spinnerNoise()
                     .nl()
                     .add("final string")
-                    .toString();
-            System.out.println(s);
-            telemetry.addLine(s);
+                    .toString());
             telemetry.update();
         }
     }

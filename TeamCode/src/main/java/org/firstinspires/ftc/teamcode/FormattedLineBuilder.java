@@ -22,8 +22,10 @@ public class FormattedLineBuilder {
     private String curClr = "";
     private boolean spanning = false;
 
-    @Nullable private String[] colors = null;
-    @Nullable private Consumer<String[]> adder = null;
+    @Nullable
+    private String[] colors = null;
+    @Nullable
+    private Consumer<String[]> adder = null;
 
     public FormattedLineBuilder() {
     }
@@ -34,7 +36,7 @@ public class FormattedLineBuilder {
      */
     public FormattedLineBuilder add(@NonNull Object obj) {
         if (adder != null)
-            throw new FormattedLineBuilderException("Adding elements while building entry type.");
+            throw new FormattedLineBuilderException("Adding elements during entry type.\n" + line);
 
         line.append(obj.toString()
                 .replaceAll("&", "&amp;")
@@ -51,7 +53,7 @@ public class FormattedLineBuilder {
      */
     public FormattedLineBuilder rawAdd(@NonNull Object obj) {
         if (adder != null)
-            throw new FormattedLineBuilderException("Adding raw elements while building entry type.");
+            throw new FormattedLineBuilderException("Adding raw elements during entry type.\n" + line);
 
         line.append(obj);
         return this;
@@ -87,8 +89,10 @@ public class FormattedLineBuilder {
                 final var ref = colors;
                 colors = null;
                 if (adder == null)
-                    throw new FormattedLineBuilderException("Adder is null for some reason.");
-                adder.accept(ref);
+                    throw new FormattedLineBuilderException("Adder is null for some reason.\n" + line);
+                final var addr = adder;
+                adder = null;
+                addr.accept(ref);
             }
         } else {
             if (spanning) end();
@@ -116,14 +120,14 @@ public class FormattedLineBuilder {
      * Follow the call to this building method with two color methods, which will be
      * used for the label and the data, respectively.
      * <pre>
-     * new {FormattedLineBuilder}()
+     * new FormattedLineBuilder()
      *   .startData("label", "data")
      *   .{@link FormattedLineBuilder#red}()
      *   .{@link FormattedLineBuilder#clr}("00FF00")</pre>
      */
     public FormattedLineBuilder startData(String label, Object data) {
         if (adder != null)
-            throw new FormattedLineBuilderException("Starting data entry during another entry type.");
+            throw new FormattedLineBuilderException("Starting data entry during another entry type.\n" + "adder : " + adder + "\n" + line);
 
         colors = new String[2];
         final var prevClr = curClr;
@@ -153,16 +157,15 @@ public class FormattedLineBuilder {
      *   .{@link FormattedLineBuilder#red}()</pre>
      */
     public FormattedLineBuilder startSlider(double min, double max, double cur) {
-        if (adder != null) throw new FormattedLineBuilderException(
-                "Starting slider entry during another entry type.");
+        if (adder != null)
+            throw new FormattedLineBuilderException(
+                    "Starting slider entry during another entry type.\n" + line);
 
         colors = new String[3];
         final var prevClr = curClr;
 
-        final var df = new DecimalFormat(".#");
-        df.setRoundingMode(RoundingMode.HALF_UP);
-        final var idx = Integer.parseInt(String.valueOf(df.format((cur / (max + 1e-6 - min)) * 2)
-                .charAt(1)));
+        final var percent = cur / (max + 1e-6 - min);
+        final var idx = (int) Math.round(20 * percent);
 
         adder = (clrs) -> {
             for (int i = 0; i < clrs.length; i++)
@@ -195,16 +198,13 @@ public class FormattedLineBuilder {
      */
     public FormattedLineBuilder startProgressBar(double min, double max, double cur) {
         if (adder != null) throw new FormattedLineBuilderException(
-                "Starting progress bar entry during another entry type.");
+                "Starting progress bar entry during another entry type.\n" + line);
 
         colors = new String[2];
         final var prevClr = curClr;
 
-        final var df = new DecimalFormat(".#");
-        df.setRoundingMode(RoundingMode.HALF_UP);
-
-        final double percent = (cur / (max + 1e-6 - min));
-        final var idx = Integer.parseInt(String.valueOf(df.format(percent * 2).charAt(1)));
+        final var percent = cur / (max + 1e-6 - min);
+        final var idx = (int) Math.round(20 * percent);
 
         adder = (clrs) -> {
             for (int i = 0; i < clrs.length; i++)

@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 
-public class TrapezodialProfile {
+public class TrapezoidalProfile {
     public final double start;
     public final double end;
     public final double mV;
@@ -9,15 +9,21 @@ public class TrapezodialProfile {
     public final double distance;
     public final double duration;
 
-    private final double[][] phases;
+    public final double[][] phases;
 
-    public TrapezodialProfile(double start, double end, double mV, double mA) {
+    public final boolean reversed;
+
+    public TrapezoidalProfile(double start, double end, double mV, double mA) {
         this.start = start;
         this.end = end;
         this.mV = mV;
         this.mA = mA;
 
-        distance = end - start;
+        final var dist = end - start;
+        reversed = dist < 0;
+        if (reversed) distance = -dist;
+        else distance = dist;
+
         if (mV / mA < distance / mV) {
             final var accelTime = mV / mA;
             final var coastTime = distance / mV - mV / mA;
@@ -25,6 +31,12 @@ public class TrapezodialProfile {
         } else {
             final var accelTime = Math.sqrt(distance / mA);
             phases = new double[][]{{mA, accelTime}, {-mA, accelTime}};
+        }
+
+        if (reversed) {
+            final var tmp = phases[0];
+            phases[0] = phases[phases.length - 1];
+            phases[phases.length - 1] = tmp;
         }
 
         var duration = 0.0;
@@ -37,6 +49,8 @@ public class TrapezodialProfile {
      * Returns double[a, v, x] at time t;
      */
     public double[] at(double t) {
+        double[] res = null;
+
         var v0 = 0.0;
         var x0 = start;
         double a = mA;
@@ -45,7 +59,8 @@ public class TrapezodialProfile {
             final var dt = phase[1];
 
             if (t < dt) {
-                return new double[]{a, v0 + a * t, x0 + v0 * t + a * (t * t) / 2};
+                res = new double[]{a, v0 + a * t, x0 + v0 * t + a * (t * t) / 2};
+                break;
             }
 
             x0 += v0 * dt + a * (dt * dt) / 2;
@@ -53,7 +68,11 @@ public class TrapezodialProfile {
 
             t -= dt;
         }
-        return new double[]{a, v0, x0};
+        if (res == null) res = new double[]{a, v0, x0};
+        if (Double.isNaN(res[2])) res[2] = end;
+        if (Double.isNaN(res[1])) res[1] = 0;
+
+        return res;
     }
 
     public boolean isFinished(double t) {

@@ -38,6 +38,7 @@ public class ProfiledServoTest extends LinearOpMode {
                     .blue()
                     .cyan()
                     .toString());
+            telemetry.addData("x", servo.getCurrentPosition());
             telemetry.update();
         }
     }
