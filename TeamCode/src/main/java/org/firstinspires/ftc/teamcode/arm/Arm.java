@@ -5,12 +5,9 @@ import static java.lang.Double.NaN;
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.jetbrains.annotations.NotNull;
 
 @Config
 public class Arm {
@@ -26,10 +23,9 @@ public class Arm {
 
     private final ElapsedTime timer = new ElapsedTime();
 
-    @NonNull
-    private ArmState state = new ArmState(NaN, NaN, NaN);
+    @NonNull private ArmState state = new ArmState(NaN, NaN, NaN);
 
-    public Arm(@NotNull HardwareMap hardwareMap) {
+    public Arm(@NonNull HardwareMap hardwareMap) {
         servo1 = (ServoImplEx) hardwareMap.get("servo1");
         servo2 = (ServoImplEx) hardwareMap.get("servo2");
         servo3 = (ServoImplEx) hardwareMap.get("servo3");
@@ -38,7 +34,7 @@ public class Arm {
         setState(new ArmState(0, 18, 0));
     }
 
-    @NotNull
+    @NonNull
     public ArmState getState() {
         return state;
     }
@@ -49,7 +45,7 @@ public class Arm {
      * If the arm cannot physically go to the requested point, this method
      * will return false, otherwise it will return true.
      */
-    public boolean setState(@NotNull ArmState newstate) {
+    public boolean setState(@NonNull ArmState newstate) {
         if (getState().equals(newstate)) return true;
         if (!newstate.reachable) return false;
 
@@ -68,7 +64,8 @@ public class Arm {
     }
 
     public void update() {
-        var repr = state + "\nturretAngle:" + state.angle1 + "\nangle1: " + state.angle2 + "\nangle2: " + state.angle3 + "\nangle3:" + state.angle4;
+        var repr =
+                state + "\nturretAngle:" + state.angle1 + "\nangle1: " + state.angle2 + "\nangle2: " + state.angle3 + "\nangle3:" + state.angle4;
         System.out.println(repr);
         System.out.println();
     }

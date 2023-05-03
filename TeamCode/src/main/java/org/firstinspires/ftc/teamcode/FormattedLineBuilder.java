@@ -6,10 +6,6 @@ import androidx.annotation.Nullable;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.jetbrains.annotations.Contract;
 
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.function.Consumer;
 
 /**

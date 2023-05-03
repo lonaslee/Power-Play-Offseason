@@ -8,10 +8,9 @@ public class TrapezoidalProfile {
     public final double mA;
     public final double distance;
     public final double duration;
-
-    public final double[][] phases;
-
     public final boolean reversed;
+
+    private final double[][] phases;
 
     public TrapezoidalProfile(double start, double end, double mV, double mA) {
         this.start = start;
@@ -46,7 +45,7 @@ public class TrapezoidalProfile {
     }
 
     /**
-     * Returns double[a, v, x] at time t;
+     * Returns double[a, v, x] at time t, where t is time in seconds.
      */
     public double[] at(double t) {
         double[] res = null;
@@ -77,5 +76,9 @@ public class TrapezoidalProfile {
 
     public boolean isFinished(double t) {
         return t > duration;
+    }
+
+    public double[][] getPhases() {
+        return phases.clone();
     }
 }

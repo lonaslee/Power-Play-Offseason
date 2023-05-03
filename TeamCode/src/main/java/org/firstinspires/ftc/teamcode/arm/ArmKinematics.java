@@ -3,9 +3,8 @@ package org.firstinspires.ftc.teamcode.arm;
 import static java.lang.Math.*;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Calculates kinematics for an arm mounted on a turret with 2DOF and an
@@ -28,14 +27,17 @@ public class ArmKinematics {
         this.l3 = l3;
     }
 
-    public double @NotNull [] getLengths() {
+    @NonNull
+    public double[] getLengths() {
         return new double[]{l1, l2, l3};
     }
+
 
     /**
      * Calculate vertical coordinates of the arm's joints, returning them in an array of array-points.
      */
-    public double @NotNull [][] forwardKinematics(double degree1, double degree2, double degree3) {
+    @NonNull
+    public double[][] forwardKinematics(double degree1, double degree2, double degree3) {
         double rad1 = toRadians(degree1);
         double rad2 = toRadians(degree2);
         double rad3 = toRadians(degree3);
@@ -56,7 +58,8 @@ public class ArmKinematics {
      * third angle in every configuration is the angle that makes the end effector
      * parallel to the ground.
      */
-    public double @Nullable [][] inverseKinematics(double x, double y) {
+    @Nullable
+    public double[][] inverseKinematics(double x, double y) {
         double d = hypot(x, y);
         double b = atan2(y, x);
 
@@ -83,7 +86,8 @@ public class ArmKinematics {
      * Calculate horizontal position of the arm, given its current total extension
      * length and the degree of the turret it is mounted on.
      */
-    public double @NotNull [] forwardCoordinates(double radius, double degreeTurn) {
+    @NonNull
+    public double[] forwardCoordinates(double radius, double degreeTurn) {
         double radTurn = toRadians(degreeTurn);
         double z = radius * sin(radTurn) / sin(toRadians(90));
         double x = z / tan(radTurn);
@@ -94,7 +98,8 @@ public class ArmKinematics {
      * Calculate extension length and turret angle that will bring an arm
      * to a given horizontal coordinate.
      */
-    public double @NotNull [] inverseCoordinates(double x, double z) {
+    @NonNull
+    public double[] inverseCoordinates(double x, double z) {
         double radius = hypot(x, z);
         double radTurn = atan2(z, x);
         return new double[]{radius, angleWrap(toDegrees(radTurn))};
@@ -104,7 +109,7 @@ public class ArmKinematics {
         return degree - 360.0 * floor((degree + 180.0) * (1.0 / 360.0));
     }
 
-    @NotNull
+    @NonNull
     public static String formatArrayPoint(@NonNull double[] arrayPoint) {
         return "(" + roundDecimal(arrayPoint[0]) + ", " + roundDecimal(arrayPoint[1]) + ")";
     }
