@@ -20,4 +20,5 @@ dependencies {
         exclude group: 'org.firstinspires.ftc'
     }
     implementation 'com.github.Eeshwar-Krishnan:PhotonFTC:v2.0.4'
+    testImplementation 'junit:junit:4.13.2'
 }
