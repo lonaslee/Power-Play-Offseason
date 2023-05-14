@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.movendo;
 
 
-import androidx.annotation.NonNull;
-
 import java.util.Locale;
 
 
@@ -62,7 +60,6 @@ public class Matrix implements Cloneable {
         return sb.toString();
     }
 
-    @NonNull
     @Override
     public Matrix clone() {
         return new Matrix(vals);

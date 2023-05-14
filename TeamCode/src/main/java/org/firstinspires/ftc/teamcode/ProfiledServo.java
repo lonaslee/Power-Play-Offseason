@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
+import org.firstinspires.ftc.teamcode.movendo.TrapezoidalProfile;
+
 import java.util.Arrays;
 
 public class ProfiledServo {
