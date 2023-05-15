@@ -125,6 +125,22 @@ public class Movendo {
         setMotorPowers(getMotorPowers(vx, vy, vh, currentPose.h));
 
         previousPose = currentPose;
+
+        updatePICCoefficients();
+    }
+
+    private void updatePICCoefficients() {
+        controllerX.kP = controllerY.kP = tP;
+        controllerX.kI = controllerY.kI = tI;
+        controllerX.kD = controllerY.kD = tD;
+        controllerH.kP = hP;
+        controllerH.kI = hI;
+        controllerH.kD = hD;
+
+        feedbackX.kP = feedbackY.kP = sP;
+        feedbackX.kV = feedbackY.kV = sV;
+        feedbackH.kP = saP;
+        feedbackH.kV = saV;
     }
 
     public double[] getMotorPowers(double x, double y, double t, double yaw) {

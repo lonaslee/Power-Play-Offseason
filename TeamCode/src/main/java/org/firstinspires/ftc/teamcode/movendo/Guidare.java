@@ -79,7 +79,7 @@ public class Guidare {
                 currentPose.x + deltas.get(0, 0),
                 currentPose.y + deltas.get(0, 1),
                 currentAngle
-                // currentPose.h + deltas.get(0, 2)
+//                 currentPose.h + deltas.get(0, 2)
         );
 
         if (tm != null) {
