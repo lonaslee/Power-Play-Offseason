@@ -67,6 +67,10 @@ public class Movendo {
         this.tm = tm;
     }
 
+    public Pose getCurrentPose() {
+        return guidare.getCurrentPose();
+    }
+
     private Pose targetPose = new Pose(0, 0, 0);
 
     public Pose getTargetPose() {
@@ -99,11 +103,18 @@ public class Movendo {
 
     private Pose previousPose = new Pose(0, 0, 0);
 
+    private boolean busy = false;
+
+    public boolean isBusy() {
+        return busy;
+    }
+
     public void update() {
         guidare.update();
         final Pose currentPose = getCurrentPose();
 
         final double t = profileTimer.time();
+        busy = profileX.isFinished(t) && profileY.isFinished(t) && profileH.isFinished(t);
         final double[] atX = profileX.at(t);
         final double[] atY = profileY.at(t);
         final double[] atH = profileH.at(t);
@@ -160,9 +171,5 @@ public class Movendo {
 
     public void setMotorPowers(double[] powers) {
         for (int i = 0; i < 4; i++) motors[i].setPower(powers[i]);
-    }
-
-    public Pose getCurrentPose() {
-        return guidare.getCurrentPose();
     }
 }
