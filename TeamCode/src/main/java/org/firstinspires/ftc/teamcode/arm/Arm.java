@@ -78,11 +78,11 @@ public class Arm {
         return position * 270.0;
     }
 
-    private static double clipRange(double num, double min, double max) {
+    public static double clipRange(double num, double min, double max) {
         return Double.min(Double.max(num, min), max);
     }
 
-    private static double clipRange(double num) {
+    public static double clipRange(double num) {
         return clipRange(num, 0, 1);
     }
 }

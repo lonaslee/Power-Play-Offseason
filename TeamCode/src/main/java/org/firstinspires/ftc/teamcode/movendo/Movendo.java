@@ -7,6 +7,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -55,6 +56,8 @@ public class Movendo {
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
+        motors[0].setDirection(DcMotorSimple.Direction.REVERSE);
+        motors[1].setDirection(DcMotorSimple.Direction.REVERSE);
         imu = (BNO055IMU) hardwareMap.get("imu");
         imu.initialize(new BNO055IMU.Parameters());
 
@@ -155,18 +158,23 @@ public class Movendo {
     }
 
     public double[] getMotorPowers(double x, double y, double t, double yaw) {
-        final double rotX = x * cos(yaw) - y * sin(yaw);
-        final double rotY = x * sin(yaw) + y * cos(yaw);
+        final double rotX = x * cos(-yaw) - y * sin(-yaw);
+        final double rotY = x * sin(-yaw) + y * cos(-yaw);
         return new double[]{
                 rotX + rotY + t,
                 rotX - rotY + t,
-                rotX - rotY - t,
-                rotX + rotY - t
+                rotX + rotY - t,
+                rotX - rotY - t
         };
     }
 
     public double[] getMotorPowers(double x, double y, double t) {
-        return getMotorPowers(x, y, t, 0);
+        return new double[]{
+                x + y + t,
+                x - y + t,
+                x + y - t,
+                x - y - t
+        };
     }
 
     public void setMotorPowers(double[] powers) {

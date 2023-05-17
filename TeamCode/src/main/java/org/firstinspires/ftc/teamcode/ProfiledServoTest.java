@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.lonaslee.formattedtelemetry.FormattedLineBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -24,6 +25,7 @@ public class ProfiledServoTest extends LinearOpMode {
         );
 
         ProfiledServo servo = new ProfiledServo((Servo) hardwareMap.get("servo1"), 0);
+
         waitForStart();
 
         while (opModeIsActive()) {

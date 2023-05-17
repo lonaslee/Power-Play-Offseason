@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp
 @Config
-public class MovendoTest extends LinearOpMode {
+public class MovTest extends LinearOpMode {
     public static double targetX = 0;
     public static double targetY = 0;
     public static double targetH = 0;
@@ -22,10 +22,9 @@ public class MovendoTest extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            mv.setMotorPowers(mv.getMotorPowers(targetX, targetY, targetH));
+            mv.setTargetPose(new Pose(targetX, targetY, targetH));
 
-//            mv.update();
-            mv.guidare.update();
+            mv.update();
             telemetry.update();
         }
     }
