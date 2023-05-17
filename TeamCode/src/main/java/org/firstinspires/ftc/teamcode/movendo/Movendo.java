@@ -140,10 +140,19 @@ public class Movendo {
 
         previousPose = currentPose;
 
-        updatePICCoefficients();
+        updatePIDCoefficients();
+
+        if (tm != null) {
+            tm.addData("vx", vx);
+            tm.addData("vy", vy);
+            tm.addData("vh", vh);
+            tm.addData("tx", atX[2]);
+            tm.addData("ty", atY[2]);
+            tm.addData("th", atH[2]);
+        }
     }
 
-    private void updatePICCoefficients() {
+    private void updatePIDCoefficients() {
         controllerX.kP = controllerY.kP = tP;
         controllerX.kI = controllerY.kI = tI;
         controllerX.kD = controllerY.kD = tD;
