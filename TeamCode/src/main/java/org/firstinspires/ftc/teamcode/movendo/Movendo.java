@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -39,8 +40,9 @@ public class Movendo {
 
     private final DcMotorEx[] motors;
     private final BNO055IMU imu;
+    private final VoltageSensor voltageSensor;
 
-    public final Guidare guidare;
+    public final MecanumLocalizer localizer;
 
     private final Telemetry tm;
 
@@ -60,8 +62,9 @@ public class Movendo {
         motors[1].setDirection(DcMotorSimple.Direction.REVERSE);
         imu = (BNO055IMU) hardwareMap.get("imu");
         imu.initialize(new BNO055IMU.Parameters());
+        voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        guidare = new Guidare(new DoubleSupplier[]{
+        localizer = new MecanumLocalizer(new DoubleSupplier[]{
                 motors[0]::getCurrentPosition,
                 motors[1]::getCurrentPosition,
                 motors[2]::getCurrentPosition,
@@ -71,7 +74,7 @@ public class Movendo {
     }
 
     public Pose getCurrentPose() {
-        return guidare.getCurrentPose();
+        return localizer.getCurrentPose();
     }
 
     private Pose targetPose = new Pose(0, 0, 0);
@@ -83,12 +86,12 @@ public class Movendo {
     public void setTargetPose(Pose newTargetPose) {
         if (targetPose.equals(newTargetPose)) return;
 
+        this.targetPose = newTargetPose;
+
         profileX = new TrapezoidalProfile(getCurrentPose().x, targetPose.x, mV, mA);
         profileY = new TrapezoidalProfile(getCurrentPose().y, targetPose.y, mV, mA);
         profileH = new TrapezoidalProfile(getCurrentPose().h, targetPose.h, maV, maA);
         profileTimer.reset();
-
-        this.targetPose = newTargetPose;
     }
 
     private TrapezoidalProfile profileX = new TrapezoidalProfile(0, 0, mV, mA);
@@ -113,7 +116,7 @@ public class Movendo {
     }
 
     public void update() {
-        guidare.update();
+        localizer.update();
         final Pose currentPose = getCurrentPose();
 
         final double t = profileTimer.time();
@@ -146,9 +149,7 @@ public class Movendo {
             tm.addData("vx", vx);
             tm.addData("vy", vy);
             tm.addData("vh", vh);
-            tm.addData("tx", atX[2]);
-            tm.addData("ty", atY[2]);
-            tm.addData("th", atH[2]);
+            MecanumLocalizer.drawRobotToDashboard(new Pose(atX[2], atY[2], atH[2]), "#4CAF50");
         }
     }
 
@@ -170,23 +171,24 @@ public class Movendo {
         final double rotX = x * cos(-yaw) - y * sin(-yaw);
         final double rotY = x * sin(-yaw) + y * cos(-yaw);
         return new double[]{
-                rotX + rotY + t,
-                rotX - rotY + t,
-                rotX + rotY - t,
-                rotX - rotY - t
+                rotY + rotX + t,
+                rotY - rotX + t,
+                rotY + rotX - t,
+                rotY - rotX - t
         };
     }
 
     public double[] getMotorPowers(double x, double y, double t) {
         return new double[]{
-                x + y + t,
-                x - y + t,
-                x + y - t,
-                x - y - t
+                y + x + t,
+                y - x + t,
+                y + x - t,
+                y - x - t
         };
     }
 
     public void setMotorPowers(double[] powers) {
-        for (int i = 0; i < 4; i++) motors[i].setPower(powers[i]);
+        for (int i = 0; i < 4; i++)
+            motors[i].setPower(12 / voltageSensor.getVoltage() * powers[i]);
     }
 }

@@ -20,7 +20,7 @@ public class Pose {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof Pose && ((Pose) o).hashCode() == hashCode();
+        return (o instanceof Pose) && (o.hashCode() == hashCode());
     }
 
     @Override

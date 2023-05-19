@@ -4,7 +4,10 @@ import static java.lang.Math.cos;
 import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -14,7 +17,7 @@ import java.util.function.DoubleSupplier;
 
 
 @Config
-public class Guidare {
+public class MecanumLocalizer {
     public static double TRACK_WIDTH = 15;
     public static double WHEEL_RADIUS = 1.8898;
     public static double GEAR_RATIO = 1;
@@ -24,14 +27,15 @@ public class Guidare {
     private final Telemetry tm;
 
     private final ElapsedTime loopTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
+    private final KalmanFilter kalmanFilter = new KalmanFilter();
 
-    public Guidare(DoubleSupplier[] wheelPositions, DoubleSupplier imuAngle, Telemetry tm) {
+    public MecanumLocalizer(DoubleSupplier[] wheelPositions, DoubleSupplier imuAngle, Telemetry tm) {
         this.wheelPositions = wheelPositions;
         this.imuAngle = imuAngle;
         this.tm = tm;
     }
 
-    public Guidare(DoubleSupplier[] wheelPositions, DoubleSupplier imuAngle) {
+    public MecanumLocalizer(DoubleSupplier[] wheelPositions, DoubleSupplier imuAngle) {
         this(wheelPositions, imuAngle, null);
     }
 
@@ -59,15 +63,15 @@ public class Guidare {
         final double w = (lv[br] + lv[fr] - lv[fl] - lv[bl]) / (4 * TRACK_WIDTH);
 
         // @formatter:off
-        double sinwt_div_w = t - pow(t, 3) * pow(w, 2) / 6;
+        double sinwt_over_w = t - pow(t, 3) * pow(w, 2) / 6;
         final Matrix deltas = new Matrix(new double[][]{
-                { cos(0), -sin(0), 0 },
-                { sin(0),  cos(0), 0 },
-                {   0   ,    0   , 1 }
+                { cos(previousAngle), -sin(previousAngle), 0 },
+                { sin(previousAngle),  cos(previousAngle), 0 },
+                {          0        ,           0        , 1 }
         }).mul(new Matrix(new double[][]{
-                {    sinwt_div_w   , pow(t, 2) * w / -2, 0 },
-                { pow(t, 2) * w / 2,     sinwt_div_w   , 0 },
-                {         0        ,         0         , t }
+                {    sinwt_over_w   , pow(t, 2) * w / -2, 0 },
+                { pow(t, 2) * w / 2,     sinwt_over_w   , 0 },
+                {         0        ,         0          , t }
         })).mul(new Matrix(new double[][]{
                 { vx },
                 { vy },
@@ -78,19 +82,39 @@ public class Guidare {
         currentPose = new Pose(
                 currentPose.x + deltas.get(0, 0),
                 currentPose.y + deltas.get(0, 1),
-                currentAngle
-//                 currentPose.h + deltas.get(0, 2)
+                kalmanFilter.estimate(
+                        currentPose.h + deltas.get(0, 2),
+                        currentAngle
+                )
         );
 
         if (tm != null) {
             tm.addData("x", currentPose.x);
             tm.addData("y", currentPose.y);
             tm.addData("heading", Math.toDegrees(currentPose.h));
+
+            drawRobotToDashboard(currentPose, "#3F51B5");
         }
 
         previousPositions = currentPositions;
         previousAngle = currentAngle;
         loopTimer.reset();
+    }
+
+    public static void drawRobotToDashboard(Pose pose, String color) { // dashboardutil thing
+        TelemetryPacket packet = new TelemetryPacket();
+        Canvas fieldOverlay = packet.fieldOverlay();
+        fieldOverlay.setStroke(color);
+        fieldOverlay.setStrokeWidth(1);
+
+        final int ROBOT_RADIUS = 9;
+        fieldOverlay.strokeCircle(pose.x, pose.y, ROBOT_RADIUS);
+        Pose v = new Pose(cos(pose.h) * ROBOT_RADIUS, sin(pose.h) * ROBOT_RADIUS, 0);
+        double x1 = pose.x + v.x / 2, y1 = pose.y + v.y / 2;
+        double x2 = pose.x + v.x, y2 = pose.y + v.y;
+        fieldOverlay.strokeLine(x1, y1, x2, y2);
+
+        FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
 
     private static final int fl = 0;

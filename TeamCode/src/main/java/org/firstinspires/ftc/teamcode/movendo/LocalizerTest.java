@@ -10,11 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp
 @Config
-public class MovendoTest extends LinearOpMode {
-    public static double targetX = 0;
-    public static double targetY = 0;
-    public static double targetH = 0;
-
+public class LocalizerTest extends LinearOpMode {
     @Override
     public void runOpMode() {
         telemetry = new MultipleTelemetry(
@@ -26,9 +22,14 @@ public class MovendoTest extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            mv.setTargetPose(new Pose(targetX, targetY, targetH));
+            mv.setMotorPowers(mv.getMotorPowers(
+                    gamepad1.left_stick_x,
+                    -gamepad1.left_stick_y,
+                    gamepad1.right_stick_x,
+                    mv.getCurrentPose().h)
+            );
 
-            mv.update();
+            mv.localizer.update();
             telemetry.update();
         }
     }
