@@ -58,8 +58,8 @@ public class Movendo {
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
-        motors[0].setDirection(DcMotorSimple.Direction.REVERSE);
-        motors[1].setDirection(DcMotorSimple.Direction.REVERSE);
+        motors[2].setDirection(DcMotorSimple.Direction.REVERSE);
+        motors[3].setDirection(DcMotorSimple.Direction.REVERSE);
         imu = (BNO055IMU) hardwareMap.get("imu");
         imu.initialize(new BNO055IMU.Parameters());
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
@@ -109,6 +109,7 @@ public class Movendo {
 
     private Pose previousPose = new Pose(0, 0, 0);
 
+
     private boolean busy = false;
 
     public boolean isBusy() {
@@ -149,7 +150,6 @@ public class Movendo {
             tm.addData("vx", vx);
             tm.addData("vy", vy);
             tm.addData("vh", vh);
-            MecanumLocalizer.drawRobotToDashboard(new Pose(atX[2], atY[2], atH[2]), "#4CAF50");
         }
     }
 

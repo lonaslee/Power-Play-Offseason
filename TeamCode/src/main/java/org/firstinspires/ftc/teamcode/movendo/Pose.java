@@ -30,7 +30,7 @@ public class Pose {
 
     @Override
     public String toString() {
-        return "(" + df.format(x) + ", " + df.format(y) + ", " + df.format(h) + ")";
+        return "(" + df.format(x) + ", " + df.format(y) + ", " + df.format(Math.toDegrees(h)) + ")";
     }
 
     private static final DecimalFormat df;

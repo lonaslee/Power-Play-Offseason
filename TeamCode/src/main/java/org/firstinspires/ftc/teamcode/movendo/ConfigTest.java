@@ -22,8 +22,8 @@ public class ConfigTest extends LinearOpMode {
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
-        motors[0].setDirection(DcMotorSimple.Direction.REVERSE);
-        motors[1].setDirection(DcMotorSimple.Direction.REVERSE);
+        motors[2].setDirection(DcMotorSimple.Direction.REVERSE);
+        motors[3].setDirection(DcMotorSimple.Direction.REVERSE);
 
         var fl = motors[0];
         var bl = motors[1];
