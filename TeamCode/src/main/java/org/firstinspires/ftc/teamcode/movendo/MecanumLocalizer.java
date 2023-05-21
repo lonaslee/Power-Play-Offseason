@@ -4,16 +4,13 @@ import static java.lang.Math.cos;
 import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.Arrays;
-import java.util.Map;
 import java.util.function.DoubleSupplier;
 
 
@@ -57,12 +54,11 @@ public class MecanumLocalizer {
         final double[] lv = new double[4];
         for (int i = 0; i < 4; i++)
             lv[i] = (currentPositions[i] - previousPositions[i]) * (WHEEL_RADIUS * GEAR_RATIO);
-        final double av = currentAngle - previousAngle;
         final double t = loopTimer.time();
 
         final double vy = (lv[fr] + lv[fl] + lv[br] + lv[bl]) / 4;
         final double vx = (lv[bl] + lv[fr] - lv[fl] - lv[br]) / 4;
-        final double w = av; //(lv[br] + lv[fr] - lv[fl] - lv[bl]) / (4 * TRACK_WIDTH);
+        final double w = currentAngle - previousAngle;
 
         // @formatter:off
         double sinwt_over_w = t - pow(t, 3) * pow(w, 2) / 6;
@@ -84,9 +80,6 @@ public class MecanumLocalizer {
         final double dx = deltas.get(0, 0);
         final double dy = deltas.get(0, 1);
 
-//        final double rdX = dx * cos(-currentAngle) - dy * sin(-currentAngle);
-//        final double rdY = dx * sin(-currentAngle) + dy * cos(-currentAngle);
-
         currentPose = new Pose(
                 currentPose.x + dx,
                 currentPose.y + dy,
@@ -94,9 +87,9 @@ public class MecanumLocalizer {
         );
 
         if (tm != null) {
-            tm.addData("x", getCurrentPose().x);
-            tm.addData("y", getCurrentPose().y);
-            tm.addData("h", getCurrentPose().h);
+            tm.addData("currentX", getCurrentPose().x);
+            tm.addData("currentY", getCurrentPose().y);
+            tm.addData("currentH", getCurrentPose().hdeg());
         }
 
         previousPositions = currentPositions;

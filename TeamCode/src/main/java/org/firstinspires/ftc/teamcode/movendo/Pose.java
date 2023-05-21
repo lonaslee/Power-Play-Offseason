@@ -18,6 +18,10 @@ public class Pose {
         this.h = AngleUnit.normalizeRadians(h);
     }
 
+    public double hdeg() {
+        return Math.toDegrees(h);
+    }
+
     @Override
     public boolean equals(Object o) {
         return (o instanceof Pose) && (o.hashCode() == hashCode());
@@ -30,13 +34,12 @@ public class Pose {
 
     @Override
     public String toString() {
-        return "(" + df.format(x) + ", " + df.format(y) + ", " + df.format(Math.toDegrees(h)) + ")";
+        return "(" + df.format(x) + ", " + df.format(y) + ", " + df.format(hdeg()) + ")";
     }
 
-    private static final DecimalFormat df;
+    private static final DecimalFormat df = new DecimalFormat(".##");
 
     static {
-        df = new DecimalFormat(".##");
         df.setRoundingMode(RoundingMode.HALF_UP);
     }
 }

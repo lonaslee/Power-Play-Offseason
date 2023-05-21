@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.movendo;
 
 
+import java.util.Arrays;
 import java.util.Locale;
 
 
@@ -25,7 +26,7 @@ public class Matrix implements Cloneable {
 
     public Matrix mul(Matrix other) {
         if (numCols != other.numRows)
-            throw new IllegalArgumentException("Matrix multiplication with incompatible matrices.");
+            throw new IllegalArgumentException("Matrix multiplication with incompatible matrices: " + other.toOrderString() + " & " + toOrderString());
 
         Matrix res = new Matrix(new double[numRows][other.numCols]);
         for (int y = 0; y < numRows; y++) {
@@ -48,6 +49,30 @@ public class Matrix implements Cloneable {
         return res;
     }
 
+    public Matrix add(Matrix other) {
+        if (numCols != other.numCols || numRows != other.numRows)
+            throw new IllegalArgumentException("Matrix addition with incompatible matrices: " + other.toOrderString() + " & " + toOrderString());
+
+        final double[][] newvals = vals.clone();
+        for (int n = 0; n < newvals.length; n++)
+            for (int m = 0; m < newvals[n].length; m++)
+                newvals[n][m] += other.vals[n][m];
+
+        return new Matrix(newvals);
+    }
+
+    public Matrix sub(Matrix other) {
+        return add(other.neg());
+    }
+
+    public Matrix neg() {
+        return mul(-1);
+    }
+
+    public String toOrderString() {
+        return numRows + " x " + numCols;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -61,7 +86,20 @@ public class Matrix implements Cloneable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        return o instanceof Matrix && o.hashCode() == hashCode();
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Arrays.deepHashCode(vals);
+        result = 31 * result + numRows;
+        result = 31 * result + numCols;
+        return result;
+    }
+
+    @Override
     public Matrix clone() {
-        return new Matrix(vals);
+        return new Matrix(vals.clone());
     }
 }

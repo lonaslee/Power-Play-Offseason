@@ -107,14 +107,13 @@ public class Movendo {
     private final StateFeedback feedbackY = new StateFeedback(sP, sV);
     private final StateFeedback feedbackH = new StateFeedback(saP, saV);
 
-    private Pose previousPose = new Pose(0, 0, 0);
-
-
     private boolean busy = false;
 
     public boolean isBusy() {
         return busy;
     }
+
+    private Pose previousPose = new Pose(0, 0, 0);
 
     public void update() {
         localizer.update();
@@ -140,7 +139,7 @@ public class Movendo {
             vh = feedbackH.calculate(atH[2], atH[1], currentPose.h, (currentPose.h - previousPose.h));
         }
 
-        setMotorPowers(getMotorPowers(vx, vy, vh, currentPose.h));
+        setMotorPowers(getMotorPowers(-vx, vy, vh, currentPose.h));
 
         previousPose = currentPose;
 
@@ -150,6 +149,9 @@ public class Movendo {
             tm.addData("vx", vx);
             tm.addData("vy", vy);
             tm.addData("vh", vh);
+            tm.addData("targetX", atX[2]);
+            tm.addData("targetY", atY[2]);
+            tm.addData("targetH", atH[2]);
         }
     }
 
