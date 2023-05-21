@@ -28,4 +28,16 @@ public class MatrixTest {
         System.out.println(mat1.add(mat2));
         System.out.println(mat1.sub(mat2));
     }
+
+    @Test
+    public void cloneTest() {
+        var mat = new Matrix(new double[][]{{1, 2}, {2, 1}});
+        var mat2 = mat.copy();
+        System.out.println(mat);
+        System.out.println(mat2);
+
+        mat2.set(0, 1, 5);
+        System.out.println(mat);
+        System.out.println(mat2);
+    }
 }

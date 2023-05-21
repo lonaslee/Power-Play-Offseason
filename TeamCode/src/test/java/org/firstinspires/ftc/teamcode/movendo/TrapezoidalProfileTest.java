@@ -1,20 +1,17 @@
 package org.firstinspires.ftc.teamcode.movendo;
 
-import static org.junit.Assert.*;
-
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.junit.Test;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.util.Arrays;
 
-public class AsymetricalTrapezoidalProfileTest {
+public class TrapezoidalProfileTest {
 
     @Test
     public void trapezoid() {
-        AsymetricalTrapezoidalProfile p = new AsymetricalTrapezoidalProfile(0, 100, 8, 20, 5);
+        TrapezoidalProfile p = new TrapezoidalProfile(0, 100, 8, 20, 5);
         ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
 //        if (true) return;
         while (true) {

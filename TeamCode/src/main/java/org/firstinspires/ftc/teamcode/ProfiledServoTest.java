@@ -6,14 +6,14 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.lonaslee.formattedtelemetry.FormattedLineBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Servo;
 
 
 @TeleOp
 @Config
 public class ProfiledServoTest extends LinearOpMode {
-    public static double mV = 0.5;
     public static double mA = 0.5;
+    public static double mV = 0.5;
+    public static double mD = 0.5;
 
     public static double target = 0;
 
@@ -24,24 +24,24 @@ public class ProfiledServoTest extends LinearOpMode {
                 FtcDashboard.getInstance().getTelemetry()
         );
 
-        ProfiledServo servo = new ProfiledServo((Servo) hardwareMap.get("servo1"), 0);
+        ProfiledServo servo = new ProfiledServo(hardwareMap.servo.get("servo1"), 0);
 
         waitForStart();
 
         while (opModeIsActive()) {
-            servo.setTarget(target);
+            servo.setPosition(target);
 
-            servo.setDefaultVel(mV);
             servo.setDefaultAccel(mA);
-
+            servo.setDefaultVel(mV);
+            servo.setDefaultDecel(mD);
             servo.update();
 
             telemetry.addLine(new FormattedLineBuilder()
-                    .startData("curPos", servo.getCurrentPosition())
+                    .startSlider(0, 1, servo.getCurrentPosition())
                     .blue()
                     .cyan()
+                    .magenta()
                     .toString());
-            telemetry.addData("x", servo.getCurrentPosition());
             telemetry.update();
         }
     }

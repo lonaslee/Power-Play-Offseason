@@ -5,15 +5,21 @@ import java.util.Arrays;
 import java.util.Locale;
 
 
-public class Matrix implements Cloneable {
+public class Matrix {
     private final double[][] vals;
     public final int numRows;
-    public final int numCols;
+    public final int numCols ;
 
     public Matrix(double[][] vals) {
         this.vals = vals;
         numRows = vals.length;
         numCols = vals[0].length;
+    }
+
+    public Matrix(Matrix original) {
+        this.vals = Arrays.stream(original.vals).map(double[]::clone).toArray(double[][]::new);
+        this.numRows = original.numRows;
+        this.numCols = original.numCols;
     }
 
     public double get(int x, int y) {
@@ -42,7 +48,7 @@ public class Matrix implements Cloneable {
     }
 
     public Matrix mul(double scalar) {
-        Matrix res = clone();
+        Matrix res = copy();
         for (int y = 0; y < res.numRows; y++)
             for (int x = 0; x < res.numCols; x++)
                 res.set(x, y, res.get(x, y) * scalar);
@@ -98,8 +104,7 @@ public class Matrix implements Cloneable {
         return result;
     }
 
-    @Override
-    public Matrix clone() {
-        return new Matrix(vals.clone());
+    public Matrix copy() {
+        return new Matrix(this);
     }
 }

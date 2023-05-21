@@ -7,11 +7,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-
 import org.firstinspires.ftc.teamcode.movendo.TrapezoidalProfile;
 
-import java.util.Arrays;
-
+/**
+ * Class that enables full control of a servo's acceleration and velocity at all
+ * times through a motion profile.
+ */
 public class ProfiledServo {
     public final ServoImplEx servo;
 
@@ -19,53 +20,77 @@ public class ProfiledServo {
     @NonNull
     private TrapezoidalProfile profile;
 
-    private double target;
-    private double defaultVel;
+    private double position;
     private double defaultAccel;
+    private double defaultVel;
+    private double defaultDecel;
 
-    public ProfiledServo(
-            @NonNull Servo servo, double initPos, double defaultVel, double defaultAccel
-    ) {
+    public ProfiledServo(@NonNull Servo servo, double initPos, double defaultAccel, double defaultVel, double defaultDecel) {
         this.servo = (ServoImplEx) servo;
         this.servo.setPwmRange(new PwmControl.PwmRange(500, 2500));
 
-        this.defaultVel = defaultVel;
         this.defaultAccel = defaultAccel;
+        this.defaultVel = defaultVel;
+        this.defaultDecel = defaultDecel;
 
-        target = initPos;
+        position = initPos;
         profile = new TrapezoidalProfile(0, initPos, defaultVel, defaultAccel);
     }
 
+    public ProfiledServo(@NonNull Servo servo, double initPos, double defaultAccel, double defaultVel) {
+        this(servo, initPos, defaultAccel, defaultVel, defaultAccel);
+    }
+
     public ProfiledServo(@NonNull Servo servo, double initPos) {
-        this(servo, initPos, 0.5, 1.5);
+        this(servo, initPos, 0.5, 1.5, 0.5);
     }
 
-    public double getTarget() {
-        return target;
+    public double getPosition() {
+        return position;
     }
 
-    public void setTarget(double pos, double mV, double mA) {
-        if (pos == target) return;
-        target = pos;
-        profile = new TrapezoidalProfile(getCurrentPosition(), target, mV, mA);
-        System.out.println("PROFILE " + Arrays.deepToString(profile.getPhases()));
+    /**
+     * Go to pos with different acceleration and deceleration.
+     */
+    public void setTarget(double pos, double mA, double mV, double mD) {
+        if (pos == position) return;
+        position = pos;
+        profile = new TrapezoidalProfile(getCurrentPosition(), position, mA, mV, mD);
         timer.reset();
     }
 
-    public void setTarget(double pos) {
-        setTarget(pos, defaultVel, defaultAccel);
+    /**
+     * Go to pos using a symmetrical profile.
+     */
+    public void setTarget(double pos, double mA, double mV) {
+        setTarget(pos, mA, mV, mA);
     }
 
+    /**
+     * Go to pos using default acceleration/velocity/deceleration.
+     */
+    public void setPosition(double pos) {
+        setTarget(pos, defaultAccel, defaultVel, defaultDecel);
+    }
+
+    /**
+     * Returns the current position of the active motion profile.
+     */
     public double getCurrentPosition() {
         return profile.at(timer.seconds())[2];
     }
 
     public void update() {
         final var res = profile.at(timer.seconds());
-        System.out.println("avx = " + Arrays.toString(res) + " ; at time " + timer.seconds());
-        if (servo.getPosition() != res[2]) {
-            servo.setPosition(res[2]);
-        }
+        if (servo.getPosition() != res[2]) servo.setPosition(res[2]);
+    }
+
+    public double getDefaultAccel() {
+        return defaultAccel;
+    }
+
+    public void setDefaultAccel(double defaultAccel) {
+        this.defaultAccel = defaultAccel;
     }
 
     public double getDefaultVel() {
@@ -76,11 +101,11 @@ public class ProfiledServo {
         this.defaultVel = defaultVel;
     }
 
-    public double getDefaultAccel() {
-        return defaultAccel;
+    public double getDefaultDecel() {
+        return defaultDecel;
     }
 
-    public void setDefaultAccel(double defaultAccel) {
-        this.defaultAccel = defaultAccel;
+    public void setDefaultDecel(double defaultDecel) {
+        this.defaultDecel = defaultDecel;
     }
 }

@@ -4,32 +4,39 @@ package org.firstinspires.ftc.teamcode.movendo;
 public class TrapezoidalProfile {
     public final double start;
     public final double end;
-    public final double mV;
     public final double mA;
+    public final double mV;
+    public final double mD;
+
     public final double distance;
     public final double duration;
     public final boolean reversed;
 
     private final double[][] phases;
 
-    public TrapezoidalProfile(double start, double end, double mV, double mA) {
+    public TrapezoidalProfile(double start, double end, double mA, double mV, double mD) {
         this.start = start;
         this.end = end;
         this.mV = mV;
         this.mA = mA;
+        this.mD = mD;
 
         final var dist = end - start;
         reversed = dist < 0;
         if (reversed) distance = -dist;
         else distance = dist;
 
-        if (mV / mA < distance / mV) {
-            final var accelTime = mV / mA;
-            final var coastTime = distance / mV - mV / mA;
-            phases = new double[][]{{mA, accelTime}, {0, coastTime}, {-mA, accelTime}};
+        final var accelTime = mV / mA;
+        final var decelTime = mV / mD;
+        final var coastTime = distance / mV - accelTime - decelTime;
+
+        if (coastTime >= 0) {
+            phases = new double[][]{{mA, accelTime}, {0, coastTime}, {-mD, decelTime}};
         } else {
-            final var accelTime = Math.sqrt(distance / mA);
-            phases = new double[][]{{mA, accelTime}, {-mA, accelTime}};
+            final var mAD = Math.min(mA, mD);
+            final var accdecTime = Math.sqrt(distance / mAD);
+
+            phases = new double[][]{{mAD, accdecTime}, {-mAD, accdecTime}};
         }
 
         if (reversed) {
@@ -42,6 +49,10 @@ public class TrapezoidalProfile {
         for (double[] phase : phases)
             duration += phase[1];
         this.duration = duration;
+    }
+
+    public TrapezoidalProfile(double start, double end, double mA, double mV) {
+        this(start, end, mA, mV, mA);
     }
 
     /**

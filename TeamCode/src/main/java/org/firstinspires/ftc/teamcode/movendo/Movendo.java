@@ -88,15 +88,15 @@ public class Movendo {
 
         this.targetPose = newTargetPose;
 
-        profileX = new TrapezoidalProfile(getCurrentPose().x, targetPose.x, mV, mA);
-        profileY = new TrapezoidalProfile(getCurrentPose().y, targetPose.y, mV, mA);
-        profileH = new TrapezoidalProfile(getCurrentPose().h, targetPose.h, maV, maA);
+        profileX = new TrapezoidalProfile(getCurrentPose().x, targetPose.x, mA, mV);
+        profileY = new TrapezoidalProfile(getCurrentPose().y, targetPose.y, mA, mV);
+        profileH = new TrapezoidalProfile(getCurrentPose().h, targetPose.h, maA, maV);
         profileTimer.reset();
     }
 
-    private TrapezoidalProfile profileX = new TrapezoidalProfile(0, 0, mV, mA);
-    private TrapezoidalProfile profileY = new TrapezoidalProfile(0, 0, mV, mA);
-    private TrapezoidalProfile profileH = new TrapezoidalProfile(0, 0, maV, maA);
+    private TrapezoidalProfile profileX = new TrapezoidalProfile(0, 0, mA, mV);
+    private TrapezoidalProfile profileY = new TrapezoidalProfile(0, 0, mA, mV);
+    private TrapezoidalProfile profileH = new TrapezoidalProfile(0, 0, maA, maV);
     private final ElapsedTime profileTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
 
     private final PIDController controllerX = new PIDController(tP, tI, tD);
