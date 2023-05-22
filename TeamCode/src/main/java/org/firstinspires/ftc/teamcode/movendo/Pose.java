@@ -19,7 +19,7 @@ public class Pose {
     }
 
     public double hdeg() {
-        return Math.toDegrees(h);
+        return AngleUnit.normalizeDegrees(Math.toDegrees(h));
     }
 
     @Override

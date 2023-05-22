@@ -12,11 +12,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 @TeleOp
 @Config
-public class MovendoTest extends LinearOpMode {
-    public static double targetX = 0;
-    public static double targetY = 0;
-    public static double targetH = 0;
-
+public class SequenceTest extends LinearOpMode {
     private final Gamepad pgp1 = new Gamepad();
     private final Gamepad tgp1 = new Gamepad();
 
@@ -29,7 +25,18 @@ public class MovendoTest extends LinearOpMode {
         );
         Movendo mv = new Movendo(hardwareMap, telemetry);
 
+        Pose[] poses = new Pose[]{
+                new Pose(10, 5, Math.toRadians(90)),
+                new Pose(0, 0, 0),
+                new Pose(50, -5, Math.toRadians(-90)),
+                new Pose(0, 0, 0),
+                new Pose(50, 0, Math.toRadians(135)),
+                new Pose(0, 0, 0)
+        };
+        int idx = 0;
         waitForStart();
+
+        boolean started = false;
 
         while (opModeIsActive()) {
             try {
@@ -39,10 +46,16 @@ public class MovendoTest extends LinearOpMode {
                 throw new RuntimeException(e);
             }
 
+            if (tgp1.y && !pgp1.y) {
+                started = true;
+            }
+
             long start = System.nanoTime();
 
-            if (tgp1.y && !pgp1.y)
-                mv.setTargetPose(new Pose(targetX, targetY, Math.toRadians(targetH)));
+            if (!mv.isBusy() && started) {
+                if (idx != 4)
+                    mv.setTargetPose(poses[idx++]);
+            }
 
             mv.update();
             telemetry.addData("isBusy", mv.isBusy());

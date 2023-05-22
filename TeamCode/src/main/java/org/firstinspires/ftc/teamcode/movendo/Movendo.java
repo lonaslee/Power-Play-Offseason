@@ -21,20 +21,20 @@ import java.util.function.DoubleSupplier;
 public class Movendo {
     public static double mA = 10;
     public static double mV = 10;
-    public static double maA = 10;
-    public static double maV = 10;
+    public static double maA = 50;
+    public static double maV = 70;
 
-    public static double tP = 0.08;
+    public static double tP = 0.4;
     public static double tI = 0;
     public static double tD = 0;
-    public static double hP = 0.08;
+    public static double hP = 0.06;
     public static double hI = 0;
     public static double hD = 0;
 
-    public static double sP = 0.04;
-    public static double sV = 0.04;
-    public static double saP = 0.04;
-    public static double saV = 0.04;
+    private static double sP = 0.04;
+    private static double sV = 0.04;
+    private static double saP = 0.04;
+    private static double saV = 0.04;
 
     public static int controller = 0;
 
@@ -90,7 +90,7 @@ public class Movendo {
 
         profileX = new TrapezoidalProfile(getCurrentPose().x, targetPose.x, mA, mV);
         profileY = new TrapezoidalProfile(getCurrentPose().y, targetPose.y, mA, mV);
-        profileH = new TrapezoidalProfile(getCurrentPose().h, targetPose.h, maA, maV);
+        profileH = new TrapezoidalProfile(getCurrentPose().hdeg(), targetPose.hdeg(), maA, maV);
         profileTimer.reset();
     }
 
@@ -120,7 +120,7 @@ public class Movendo {
         final Pose currentPose = getCurrentPose();
 
         final double t = profileTimer.time();
-        busy = profileX.isFinished(t) && profileY.isFinished(t) && profileH.isFinished(t);
+        busy = !(profileX.isFinished(t) && profileY.isFinished(t) && profileH.isFinished(t));
         final double[] atX = profileX.at(t);
         final double[] atY = profileY.at(t);
         final double[] atH = profileH.at(t);
@@ -132,14 +132,14 @@ public class Movendo {
         if (controller == 0) {
             vx = controllerX.calculate(atX[2], currentPose.x);
             vy = controllerY.calculate(atY[2], currentPose.y);
-            vh = controllerH.calculate(atH[2], currentPose.h);
+            vh = controllerH.calculate(atH[2], currentPose.hdeg());
         } else {
             vx = feedbackX.calculate(atX[2], atX[1], currentPose.x, (currentPose.x - previousPose.x));
             vy = feedbackY.calculate(atY[2], atY[1], currentPose.y, (currentPose.y - previousPose.y));
             vh = feedbackH.calculate(atH[2], atH[1], currentPose.h, (currentPose.h - previousPose.h));
         }
 
-        setMotorPowers(getMotorPowers(-vx, vy, vh, currentPose.h));
+        setMotorPowers(getMotorPowers(-vx, vy, -vh, currentPose.h));
 
         previousPose = currentPose;
 
