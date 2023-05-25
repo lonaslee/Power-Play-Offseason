@@ -89,7 +89,7 @@ public class MecanumLocalizer {
         if (tm != null) {
             tm.addData("currentX", getCurrentPose().x);
             tm.addData("currentY", getCurrentPose().y);
-            tm.addData("currentH", getCurrentPose().hdeg());
+            tm.addData("currentH", getCurrentPose().hdeg);
         }
 
         previousPositions = currentPositions;

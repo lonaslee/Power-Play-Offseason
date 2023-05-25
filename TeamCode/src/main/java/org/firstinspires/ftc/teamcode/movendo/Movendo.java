@@ -31,13 +31,6 @@ public class Movendo {
     public static double hI = 0;
     public static double hD = 0;
 
-    private static double sP = 0.04;
-    private static double sV = 0.04;
-    private static double saP = 0.04;
-    private static double saV = 0.04;
-
-    public static int controller = 0;
-
     private final DcMotorEx[] motors;
     private final BNO055IMU imu;
     private final VoltageSensor voltageSensor;
@@ -77,6 +70,12 @@ public class Movendo {
         return localizer.getCurrentPose();
     }
 
+    private Pose currentTargetPose = new Pose(0, 0, 0);
+
+    public Pose getCurrentTargetPose() {
+        return currentTargetPose;
+    }
+
     private Pose targetPose = new Pose(0, 0, 0);
 
     public Pose getTargetPose() {
@@ -90,7 +89,7 @@ public class Movendo {
 
         profileX = new TrapezoidalProfile(getCurrentPose().x, targetPose.x, mA, mV);
         profileY = new TrapezoidalProfile(getCurrentPose().y, targetPose.y, mA, mV);
-        profileH = new TrapezoidalProfile(getCurrentPose().hdeg(), targetPose.hdeg(), maA, maV);
+        profileH = new TrapezoidalProfile(getCurrentPose().hdeg, targetPose.hdeg, maA, maV);
         profileTimer.reset();
     }
 
@@ -103,21 +102,14 @@ public class Movendo {
     private final PIDController controllerY = new PIDController(tP, tI, tD);
     private final PIDController controllerH = new PIDController(hP, hI, hD);
 
-    private final StateFeedback feedbackX = new StateFeedback(sP, sV);
-    private final StateFeedback feedbackY = new StateFeedback(sP, sV);
-    private final StateFeedback feedbackH = new StateFeedback(saP, saV);
-
     private boolean busy = false;
 
     public boolean isBusy() {
         return busy;
     }
 
-    private Pose previousPose = new Pose(0, 0, 0);
-
     public void update() {
         localizer.update();
-        final Pose currentPose = getCurrentPose();
 
         final double t = profileTimer.time();
         busy = !(profileX.isFinished(t) && profileY.isFinished(t) && profileH.isFinished(t));
@@ -125,33 +117,20 @@ public class Movendo {
         final double[] atY = profileY.at(t);
         final double[] atH = profileH.at(t);
 
-        final double vx;
-        final double vy;
-        final double vh;
+        currentTargetPose = Pose.fromDegrees(atX[2], atY[2], atH[2]);
 
-        if (controller == 0) {
-            vx = controllerX.calculate(atX[2], currentPose.x);
-            vy = controllerY.calculate(atY[2], currentPose.y);
-            vh = controllerH.calculate(atH[2], currentPose.hdeg());
-        } else {
-            vx = feedbackX.calculate(atX[2], atX[1], currentPose.x, (currentPose.x - previousPose.x));
-            vy = feedbackY.calculate(atY[2], atY[1], currentPose.y, (currentPose.y - previousPose.y));
-            vh = feedbackH.calculate(atH[2], atH[1], currentPose.h, (currentPose.h - previousPose.h));
-        }
+        final double vx = controllerX.calculate(currentTargetPose.x, getCurrentPose().x);
+        final double vy = controllerY.calculate(currentTargetPose.y, getCurrentPose().y);
+        final double vh = controllerH.calculate(currentTargetPose.hdeg, getCurrentPose().hdeg);
 
-        setMotorPowers(getMotorPowers(-vx, vy, -vh, currentPose.h));
-
-        previousPose = currentPose;
+        setMotorPowers(getMotorPowers(-vx, vy, -vh, getCurrentPose().h));
 
         updatePIDCoefficients();
 
         if (tm != null) {
-            tm.addData("vx", vx);
-            tm.addData("vy", vy);
-            tm.addData("vh", vh);
-            tm.addData("targetX", atX[2]);
-            tm.addData("targetY", atY[2]);
-            tm.addData("targetH", atH[2]);
+            tm.addData("targetX", currentTargetPose.x);
+            tm.addData("targetY", currentTargetPose.y);
+            tm.addData("targetH", currentTargetPose.hdeg);
         }
     }
 
@@ -162,11 +141,6 @@ public class Movendo {
         controllerH.kP = hP;
         controllerH.kI = hI;
         controllerH.kD = hD;
-
-        feedbackX.kP = feedbackY.kP = sP;
-        feedbackX.kV = feedbackY.kV = sV;
-        feedbackH.kP = saP;
-        feedbackH.kV = saV;
     }
 
     public double[] getMotorPowers(double x, double y, double t, double yaw) {
